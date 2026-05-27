@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMM Help Desk — Sannio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2ED;
+    --surface: #FFFFFF;
+    --surface2: #EDEAE3;
+    --border: #D8D4CB;
+    --text: #1A1917;
+    --muted: #7A7770;
+    --accent: #1E4D8C;
+    --accent-light: #E8EEF7;
+    --teal: #0D6B52;
+    --teal-light: #E3F2EC;
+    --amber: #8A4F0A;
+    --amber-light: #FDF0E0;
+    --red: #9B2B2B;
+    --red-light: #FDEAEA;
+    --green: #2D6A2D;
+    --green-light: #E8F5E8;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--text);
+    color: white;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: white;
+  }
+  .header-title {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .header-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-family: var(--mono);
+    letter-spacing: 0.5px;
+  }
+  .header-nav {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+  .nav-btn.active { color: white; background: rgba(255,255,255,0.14); }
+  .nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #E05C5C;
+    color: white;
+    font-size: 10px;
+    font-family: var(--mono);
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+
+  /* VIEWS */
+  .view { display: none; padding: 32px; max-width: 860px; margin: 0 auto; }
+  .view.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-full { grid-column: 1 / -1; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: var(--mono);
+  }
+  .field input, .field select, .field textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(30,77,140,0.1);
+  }
+  .field textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7770' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+  /* PRIORITY SELECTOR */
+  .priority-group { display: flex; gap: 8px; }
+  .priority-option { flex: 1; }
+  .priority-option input { display: none; }
+  .priority-option label {
+    display: block;
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--muted);
+    font-family: var(--sans);
+  }
+  .priority-option input:checked + label.p-bassa { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .priority-option input:checked + label.p-media { border-color: var(--amber); background: var(--amber-light); color: var(--amber); }
+  .priority-option input:checked + label.p-alta  { border-color: var(--red);   background: var(--red-light);   color: var(--red); }
+
+  /* SUBMIT BUTTON */
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary:hover { background: #163D72; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,77,140,0.2); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-sm {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.12s;
+  }
+  .btn-sm:hover { background: var(--surface2); }
+  .btn-sm.danger { border-color: #E05C5C; color: var(--red); }
+  .btn-sm.danger:hover { background: var(--red-light); }
+  .btn-sm.success { border-color: var(--teal); color: var(--teal); }
+  .btn-sm.success:hover { background: var(--teal-light); }
+
+  /* SUCCESS MESSAGE */
+  .toast {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: var(--green-light);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    color: var(--green);
+    font-size: 14px;
+    animation: slideIn 0.3s ease;
+  }
+  .toast.show { display: flex; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* TICKET CARDS */
+  .ticket-list { display: flex; flex-direction: column; gap: 10px; }
+  .ticket-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: start;
+    transition: box-shadow 0.15s;
+  }
+  .ticket-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .ticket-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .ticket-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .ticket-meta { font-size: 12px; color: var(--muted); }
+  .ticket-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .tag {
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .tag-cat { background: var(--accent-light); color: var(--accent); }
+  .tag-bassa { background: var(--green-light); color: var(--green); }
+  .tag-media { background: var(--amber-light); color: var(--amber); }
+  .tag-alta  { background: var(--red-light); color: var(--red); }
+  .tag-aperto  { background: var(--accent-light); color: var(--accent); }
+  .tag-chiuso  { background: var(--surface2); color: var(--muted); }
+  .tag-in-lavorazione { background: var(--teal-light); color: var(--teal); }
+
+  .ticket-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.12s;
+  }
+  .filter-btn.active, .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+  /* STATS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-num { font-size: 26px; font-weight: 600; font-family: var(--mono); letter-spacing: -1px; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .empty h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+  .empty p { font-size: 13px; }
+
+  /* DETAIL MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 28px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); line-height: 1; padding: 2px; }
+  .modal-row { margin-bottom: 14px; }
+  .modal-row label { font-size: 11px; font-family: var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 4px; }
+  .modal-row p { font-size: 14px; line-height: 1.6; }
+  .modal-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  /* ADMIN NOTES */
+  .note-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: var(--sans);
+    font-size: 13px;
+    resize: none;
+    min-height: 60px;
+    outline: none;
+    color: var(--text);
+    background: var(--surface);
+  }
+  .note-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30,77,140,0.1); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .view { padding: 20px 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .header { padding: 0 16px; }
+    .header-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">IT</div>
+    <div>
+      <div class="header-title">DEMM Help Desk</div>
+      <div class="header-sub">Univ. del Sannio</div>
+    </div>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="showView('nuovo')">Nuovo ticket</button>
+    <button class="nav-btn" onclick="showView('storico')">I miei ticket</button>
+    <button class="nav-btn" id="admin-nav-btn" onclick="showView('admin')" style="display:none">
+      Admin <span class="nav-badge" id="open-badge" style="display:none"></span>
+    </button>
+    <button class="nav-btn" onclick="toggleAdmin()" id="admin-toggle" style="color:rgba(255,255,255,0.3);font-size:11px">● admin</button>
+  </nav>
+</header>
+
+<!-- VIEW: NUOVO TICKET -->
+<div class="view active" id="view-nuovo">
+  <div class="page-header">
+    <h1>Richiedi assistenza</h1>
+    <p>Compila il modulo per inviare una richiesta al servizio tecnico informatico del Dipartimento DEMM</p>
+  </div>
+
+  <div class="toast" id="toast-success">
+    <span style="font-size:18px">✓</span>
+    <div>
+      <strong>Ticket inviato con successo.</strong> Il numero di riferimento ti è stato assegnato.
+      Verrai contattato a breve da Francesco Moleti.
+    </div>
+  </div>
+
+  <form id="ticket-form" onsubmit="submitTicket(event)">
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Nome e cognome</label>
+        <input type="text" id="f-nome" placeholder="Es. Mario Rossi" required>
+      </div>
+
+      <div class="field">
+        <label>Email istituzionale</label>
+        <input type="email" id="f-email" placeholder="nome@unisannio.it" required>
+      </div>
+
+      <div class="field">
+        <label>Ruolo</label>
+        <select id="f-ruolo" required>
+          <option value="">Seleziona…</option>
+          <option>Docente</option>
+          <option>Ricercatore / RTD</option>
+          <option>Personale T/A</option>
+          <option>Dottorando</option>
+          <option>Assegnista</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Ubicazione / Sede</label>
+        <select id="f-sede" required>
+          <option value="">Seleziona…</option>
+          <option>Via delle Puglie</option>
+          <option>Palazzo De Simone</option>
+          <option>Sede distaccata</option>
+          <option>Da remoto</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Categoria intervento</label>
+        <select id="f-categoria" required>
+          <option value="">Seleziona…</option>
+          <option>PC / Postazione di lavoro</option>
+          <option>Stampante / Periferica</option>
+          <option>Rete / Wi-Fi</option>
+          <option>Proiettore / Aula multimediale</option>
+          <option>Moodle / Piattaforma e-learning</option>
+          <option>Google Workspace / Email</option>
+          <option>Firma digitale / SPID</option>
+          <option>Software / Licenze</option>
+          <option>Webex / Videoconferenza</option>
+          <option>Altro</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Priorità</label>
+        <div class="priority-group">
+          <div class="priority-option">
+            <input type="radio" name="priorita" id="p-bassa" value="Bassa" checked>
+            <label for="p-bassa" class="p-bassa">🟢 Bassa</label>
+          </div>
+          <div class="priority-option">
+            <input type="radio" name="priorita" id="p-media" value="Media">
+            <label for="p-media" class="p-media">🟡 Media</label>
+          </div>
+          <div class="priority-option">
+            <input type="radio" name="priorita" id="p-alta" value="Alta">
+            <label for="p-alta" class="p-alta">🔴 Alta</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field form-full">
+        <label>Descrizione del problema</label>
+        <textarea id="f-descrizione" placeholder="Descrivi il problema nel dettaglio: cosa non funziona, da quando, eventuali messaggi di errore…" required></textarea>
+      </div>
+
+      <div class="field form-full" style="flex-direction:row; align-items:center; gap:10px">
+        <button type="submit" class="btn-primary">Invia richiesta</button>
+        <span style="font-size:12px; color:var(--muted)">Riceverai conferma via email</span>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- VIEW: STORICO UTENTE -->
+<div class="view" id="view-storico">
+  <div class="page-header">
+    <h1>I miei ticket</h1>
+    <p>Storico delle tue richieste di assistenza</p>
+  </div>
+  <div class="filters" id="storico-filters">
+    <button class="filter-btn active" onclick="filterStorico('tutti',this)">Tutti</button>
+    <button class="filter-btn" onclick="filterStorico('Aperto',this)">Aperti</button>
+    <button class="filter-btn" onclick="filterStorico('In lavorazione',this)">In lavorazione</button>
+    <button class="filter-btn" onclick="filterStorico('Chiuso',this)">Chiusi</button>
+  </div>
+  <div class="ticket-list" id="storico-list"></div>
+</div>
+
+<!-- VIEW: ADMIN -->
+<div class="view" id="view-admin">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end">
+    <div>
+      <h1>Pannello admin</h1>
+      <p>Gestione ticket — Francesco Moleti, Tecnico informatico DEMM</p>
+    </div>
+    <button class="btn-sm danger" onclick="if(confirm('Eliminare tutti i ticket chiusi?')){clearClosed()}">Elimina chiusi</button>
+  </div>
+  <div class="stats-row" id="stats-row"></div>
+  <div class="filters" id="admin-filters">
+    <button class="filter-btn active" onclick="filterAdmin('tutti',this)">Tutti</button>
+    <button class="filter-btn" onclick="filterAdmin('Aperto',this)">Aperti</button>
+    <button class="filter-btn" onclick="filterAdmin('In lavorazione',this)">In lavorazione</button>
+    <button class="filter-btn" onclick="filterAdmin('Chiuso',this)">Chiusi</button>
+  </div>
+  <div class="ticket-list" id="admin-list"></div>
+</div>
+
+<!-- MODAL DETTAGLIO -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'demm_tickets_v1';
+let tickets = [];
+let isAdmin = false;
+let currentFilter = { storico: 'tutti', admin: 'tutti' };
+let currentEmail = '';
+
+function load() {
+  try {
+    tickets = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch(e) { tickets = []; }
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+}
+
+function genId() {
+  const n = (tickets.length + 1).toString().padStart(4, '0');
+  const d = new Date();
+  return `TK-${d.getFullYear().toString().slice(-2)}${(d.getMonth()+1).toString().padStart(2,'0')}-${n}`;
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' })
+       + ' ' + d.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btns = { nuovo: 0, storico: 1, admin: 2 };
+  document.querySelectorAll('.nav-btn')[btns[name]]?.classList.add('active');
+  if (name === 'storico') renderStorico();
+  if (name === 'admin') renderAdmin();
+}
+
+let adminClicks = 0;
+function toggleAdmin() {
+  adminClicks++;
+  if (adminClicks >= 3) {
+    isAdmin = !isAdmin;
+    adminClicks = 0;
+    const btn = document.getElementById('admin-nav-btn');
+    btn.style.display = isAdmin ? '' : 'none';
+    document.getElementById('admin-toggle').style.color = isAdmin ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)';
+    if (isAdmin) showView('admin');
+  }
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+// 🔧 Incolla qui il tuo Web App URL dopo aver pubblicato lo script su Google
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwNzFNUhyk-zQCsCR-HmSWFyvIdFk7ZxFVP1Wwl4bGwV7QcU2XuA69yoSXGuq0577Hs/exec';
+
+async function submitTicket(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Invio in corso…';
+  btn.disabled = true;
+
+  const priorita = document.querySelector('input[name="priorita"]:checked')?.value || 'Bassa';
+  const ticket = {
+    id: genId(),
+    createdAt: new Date().toISOString(),
+    nome: document.getElementById('f-nome').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    ruolo: document.getElementById('f-ruolo').value,
+    sede: document.getElementById('f-sede').value,
+    categoria: document.getElementById('f-categoria').value,
+    priorita,
+    descrizione: document.getElementById('f-descrizione').value.trim(),
+    stato: 'Aperto',
+    note: ''
+  };
+
+  tickets.unshift(ticket);
+  save();
+  currentEmail = ticket.email;
+
+  // Invia tramite immagine invisibile — bypassa CORS su file://
+  let emailOk = false;
+  try {
+    await new Promise((resolve, reject) => {
+      const params = new URLSearchParams({
+        id: ticket.id,
+        nome: ticket.nome,
+        email: ticket.email,
+        ruolo: ticket.ruolo,
+        sede: ticket.sede,
+        categoria: ticket.categoria,
+        priorita: ticket.priorita,
+        descrizione: ticket.descrizione,
+        createdAt: ticket.createdAt
+      });
+      const img = new Image();
+      img.onload = img.onerror = () => resolve();
+      setTimeout(resolve, 4000);
+      img.src = GAS_URL + '?send=1&' + params.toString();
+    });
+    emailOk = true;
+  } catch(err) {
+    console.warn('Errore invio:', err);
+  }
+
+  btn.textContent = 'Invia richiesta';
+  btn.disabled = false;
+  document.getElementById('ticket-form').reset();
+  document.getElementById('p-bassa').checked = true;
+
+  const toast = document.getElementById('toast-success');
+  const emailMsg = emailOk
+    ? `Email di conferma inviata a <em>${ticket.email}</em>.`
+    : GAS_URL === 'INCOLLA_QUI_IL_TUO_SCRIPT_URL'
+      ? `<span style="color:#8A4F0A">⚠ Configura lo script URL per attivare le email.</span>`
+      : `<span style="color:#8A4F0A">⚠ Ticket salvato, ma l'email non è stata inviata.</span>`;
+  toast.innerHTML = `<span style="font-size:18px">✓</span><div><strong>Ticket ${ticket.id} registrato.</strong> ${emailMsg}</div>`;
+  toast.classList.add('show');
+  updateBadge();
+  setTimeout(() => toast.classList.remove('show'), 8000);
+}
+
+// ── STORICO ───────────────────────────────────────────────────────────────
+function filterStorico(f, btn) {
+  currentFilter.storico = f;
+  document.querySelectorAll('#storico-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderStorico();
+}
+
+function renderStorico() {
+  const list = document.getElementById('storico-list');
+  const myEmail = currentEmail || prompt('Inserisci la tua email istituzionale per vedere i tuoi ticket:') || '';
+  if (myEmail) currentEmail = myEmail.trim();
+
+  let mine = tickets.filter(t => t.email.toLowerCase() === currentEmail.toLowerCase());
+  if (currentFilter.storico !== 'tutti') mine = mine.filter(t => t.stato === currentFilter.storico);
+
+  if (!mine.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>Nessun ticket trovato</h3><p>Non hai ancora inviato richieste di assistenza</p></div>`;
+    return;
+  }
+  list.innerHTML = mine.map(t => ticketCard(t, false)).join('');
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────
+function filterAdmin(f, btn) {
+  currentFilter.admin = f;
+  document.querySelectorAll('#admin-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAdmin();
+}
+
+function renderAdmin() {
+  renderStats();
+  const list = document.getElementById('admin-list');
+  let data = [...tickets];
+  if (currentFilter.admin !== 'tutti') data = data.filter(t => t.stato === currentFilter.admin);
+  if (!data.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h3>Tutto a posto</h3><p>Nessun ticket in questa categoria</p></div>`;
+    return;
+  }
+  list.innerHTML = data.map(t => ticketCard(t, true)).join('');
+  updateBadge();
+}
+
+function renderStats() {
+  const aperto = tickets.filter(t => t.stato === 'Aperto').length;
+  const lavorazione = tickets.filter(t => t.stato === 'In lavorazione').length;
+  const chiuso = tickets.filter(t => t.stato === 'Chiuso').length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${tickets.length}</div><div class="stat-label">Totale</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${aperto}</div><div class="stat-label">Aperti</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--teal)">${lavorazione}</div><div class="stat-label">In lavorazione</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--muted)">${chiuso}</div><div class="stat-label">Chiusi</div></div>
+  `;
+}
+
+function updateBadge() {
+  const open = tickets.filter(t => t.stato === 'Aperto').length;
+  const badge = document.getElementById('open-badge');
+  if (open > 0) { badge.style.display = ''; badge.textContent = open; }
+  else badge.style.display = 'none';
+}
+
+// ── TICKET CARD ───────────────────────────────────────────────────────────
+function ticketCard(t, admin) {
+  const statoClass = t.stato === 'Aperto' ? 'aperto' : t.stato === 'Chiuso' ? 'chiuso' : 'in-lavorazione';
+  const prioClass = 'tag-' + t.priorita.toLowerCase();
+  let actions = '';
+  if (admin) {
+    actions = `
+      <div class="ticket-actions">
+        ${t.stato !== 'In lavorazione' ? `<button class="btn-sm success" onclick="setStato('${t.id}','In lavorazione')">Prendi in carico</button>` : ''}
+        ${t.stato !== 'Chiuso' ? `<button class="btn-sm" onclick="setStato('${t.id}','Chiuso')">Chiudi</button>` : ''}
+        <button class="btn-sm" onclick="openModal('${t.id}')">Dettagli</button>
+      </div>`;
+  } else {
+    actions = `<div class="ticket-actions"><button class="btn-sm" onclick="openModal('${t.id}')">Dettagli</button></div>`;
+  }
+  return `
+    <div class="ticket-card" id="card-${t.id}">
+      <div class="ticket-id">${t.id}</div>
+      <div>
+        <div class="ticket-title">${escHtml(t.categoria)}</div>
+        <div class="ticket-meta">${escHtml(t.nome)} · ${escHtml(t.sede)} · ${fmtDate(t.createdAt)}</div>
+        <div class="ticket-tags">
+          <span class="tag tag-cat">${escHtml(t.categoria)}</span>
+          <span class="tag ${prioClass}">${t.priorita}</span>
+          <span class="tag tag-${statoClass}">${t.stato}</span>
+        </div>
+      </div>
+      ${actions}
+    </div>`;
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────
+function openModal(id) {
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+  const statoOptions = ['Aperto','In lavorazione','Chiuso'].map(s =>
+    `<option ${t.stato===s?'selected':''}>${s}</option>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header">
+      <div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">${t.id} · ${fmtDate(t.createdAt)}</div>
+        <h2 style="font-size:17px;font-weight:600">${escHtml(t.categoria)}</h2>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-row"><label>Richiedente</label><p>${escHtml(t.nome)} · <a href="mailto:${t.email}" style="color:var(--accent)">${t.email}</a></p></div>
+    <div class="modal-row"><label>Ruolo</label><p>${escHtml(t.ruolo)}</p></div>
+    <div class="modal-row"><label>Sede</label><p>${escHtml(t.sede)}</p></div>
+    <div class="modal-row"><label>Priorità</label><p>${t.priorita}</p></div>
+    <div class="modal-row"><label>Descrizione</label><p style="white-space:pre-wrap">${escHtml(t.descrizione)}</p></div>
+    <hr class="modal-divider">
+    ${isAdmin ? `
+      <div class="modal-row">
+        <label>Stato</label>
+        <select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;background:var(--surface);color:var(--text);width:auto" id="modal-stato" onchange="setStato('${t.id}',this.value)">${statoOptions}</select>
+      </div>
+      <div class="modal-row">
+        <label>Note tecniche (visibili solo all'admin)</label>
+        <textarea class="note-input" id="modal-note" placeholder="Aggiungi note sull'intervento…">${escHtml(t.note||'')}</textarea>
+        <button class="btn-sm success" style="margin-top:6px" onclick="saveNote('${t.id}')">Salva nota</button>
+      </div>
+    ` : t.note ? `<div class="modal-row"><label>Aggiornamento tecnico</label><p>${escHtml(t.note)}</p></div>` : ''}
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function setStato(id, stato) {
+  const t = tickets.find(x => x.id === id);
+  if (t) { t.stato = stato; save(); renderAdmin(); updateBadge(); }
+}
+
+function saveNote(id) {
+  const t = tickets.find(x => x.id === id);
+  if (t) {
+    t.note = document.getElementById('modal-note').value;
+    save();
+    const btn = document.querySelector('#modal-content .btn-sm.success');
+    if (btn) { btn.textContent = 'Salvato ✓'; setTimeout(() => btn.textContent = 'Salva nota', 1500); }
+  }
+}
+
+function clearClosed() {
+  tickets = tickets.filter(t => t.stato !== 'Chiuso');
+  save(); renderAdmin();
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+load();
+updateBadge();
+</script>
+</body>
+</html>
