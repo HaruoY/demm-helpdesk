@@ -280,27 +280,56 @@ function fmtDate(iso) {
   return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
 
-// ── JSONP ──────────────────────────────────────────────────────────────────
+// ── JSONP con fallback fetch per Safari ───────────────────────────────────
 function jsonpCall(params) {
   return new Promise((resolve, reject) => {
     const cbName = 'cb_' + Date.now();
+    let settled = false;
+
     const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
       delete window[cbName];
-      script.remove();
+      if (scriptEl) scriptEl.remove();
       reject(new Error('timeout'));
     }, 8000);
+
     window[cbName] = (data) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timeout);
       delete window[cbName];
-      script.remove();
+      if (scriptEl) scriptEl.remove();
       resolve(data);
     };
+
     params.callback = cbName;
     const qs = new URLSearchParams(params).toString();
-    const script = document.createElement('script');
-    script.src = GAS_URL + '?' + qs;
-    script.onerror = () => { clearTimeout(timeout); reject(new Error('script error')); };
-    document.head.appendChild(script);
+    const scriptEl = document.createElement('script');
+
+    scriptEl.onerror = async () => {
+      if (settled) return;
+      // Fallback fetch no-cors per Safari
+      try {
+        await fetch(GAS_URL + '?' + qs, { method: 'GET', mode: 'no-cors' });
+        if (!settled) {
+          settled = true;
+          clearTimeout(timeout);
+          delete window[cbName];
+          resolve({ ok: true });
+        }
+      } catch(err) {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timeout);
+          delete window[cbName];
+          reject(new Error('script error'));
+        }
+      }
+    };
+
+    scriptEl.src = GAS_URL + '?' + qs;
+    document.head.appendChild(scriptEl);
   });
 }
 
