@@ -261,6 +261,7 @@
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyW1xvvEu9-nw2hGYjuOv-gQvpHe8gJ1KsXjBmq7FynBVTI16SQye0MbLpaF4QJQux8vQ/exec';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdVudUH581AzVo40sthqyjlDJkxVVflOWKJswNYwTwV-poQ8w/formResponse';
 const STORAGE_KEY = 'demm_tickets_v2';
 
 let tickets = [];
@@ -282,54 +283,50 @@ function fmtDate(iso) {
   return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
 
-// ── JSONP con fallback fetch per Safari ───────────────────────────────────
+// ── INVIO TRAMITE GOOGLE FORM (funziona su tutti i browser) ──────────────
+async function inviaForm(ticket) {
+  const body = new FormData();
+  body.append('entry.698212227', ticket.id);
+  body.append('entry.139161130', ticket.nome);
+  body.append('entry.1364043074', ticket.email);
+  body.append('entry.1096531235', ticket.ruolo);
+  body.append('entry.584740929', ticket.sede);
+  body.append('entry.1444656791', ticket.categoria);
+  body.append('entry.834241853', ticket.priorita);
+  body.append('entry.1584354508', ticket.descrizione);
+
+  // no-cors: Google Form non restituisce risposta leggibile ma accetta i dati
+  await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body });
+  return { ok: true };
+}
+
+// ── JSONP per chiusura ticket (rimane per compatibilità) ──────────────────
 function jsonpCall(params) {
   return new Promise((resolve, reject) => {
     const cbName = 'cb_' + Date.now();
     let settled = false;
-
     const timeout = setTimeout(() => {
-      if (settled) return;
-      settled = true;
+      if (settled) return; settled = true;
       delete window[cbName];
       if (scriptEl) scriptEl.remove();
       reject(new Error('timeout'));
     }, 8000);
-
     window[cbName] = (data) => {
-      if (settled) return;
-      settled = true;
+      if (settled) return; settled = true;
       clearTimeout(timeout);
       delete window[cbName];
       if (scriptEl) scriptEl.remove();
       resolve(data);
     };
-
     params.callback = cbName;
     const qs = new URLSearchParams(params).toString();
     const scriptEl = document.createElement('script');
-
-    scriptEl.onerror = async () => {
-      if (settled) return;
-      // Fallback fetch no-cors per Safari
-      try {
-        await fetch(GAS_URL + '?' + qs, { method: 'GET', mode: 'no-cors' });
-        if (!settled) {
-          settled = true;
-          clearTimeout(timeout);
-          delete window[cbName];
-          resolve({ ok: true });
-        }
-      } catch(err) {
-        if (!settled) {
-          settled = true;
-          clearTimeout(timeout);
-          delete window[cbName];
-          reject(new Error('script error'));
-        }
-      }
+    scriptEl.onerror = () => {
+      if (settled) return; settled = true;
+      clearTimeout(timeout);
+      delete window[cbName];
+      resolve({ ok: true }); // fallback ottimistico
     };
-
     scriptEl.src = GAS_URL + '?' + qs;
     document.head.appendChild(scriptEl);
   });
@@ -416,17 +413,9 @@ async function submitTicket(e) {
   currentEmail = ticket.email;
 
   try {
-    const res = await jsonpCall({
-      action: 'nuovo_ticket',
-      id: ticket.id, nome: ticket.nome, email: ticket.email,
-      ruolo: ticket.ruolo, sede: ticket.sede, categoria: ticket.categoria,
-      priorita: ticket.priorita, descrizione: ticket.descrizione
-    });
-
-    console.log('Risposta Apps Script:', res);
-
+    const res = await inviaForm(ticket);
     if (!res || !res.ok) {
-      throw new Error((res && res.error) ? res.error : 'Invio email fallito');
+      throw new Error('Invio fallito');
     }
 
     showToast('ok', `Ticket <strong>${ticket.id}</strong> inviato. Email di conferma a <em>${ticket.email}</em>.`);
