@@ -157,7 +157,7 @@
   <form id="ticket-form" onsubmit="submitTicket(event)">
     <div class="form-grid">
       <div class="field"><label>Nome e cognome</label><input type="text" id="f-nome" placeholder="Es. Mario Rossi" required></div>
-      <div class="field"><label>Email istituzionale</label><input type="email" id="f-email" placeholder="nome@unisannio.it" required></div>
+      <div class="field"><label>Email istituzionale</label><input type="email" id="f-email" placeholder="nome@unisannio.it" pattern=".+@unisannio\.it" required></div>
       <div class="field">
         <label>Ruolo</label>
         <select id="f-ruolo" required>
@@ -193,6 +193,8 @@
           <div class="priority-option"><input type="radio" name="priorita" id="p-alta" value="Alta"><label for="p-alta" class="p-alta">🔴 Alta</label></div>
         </div>
       </div>
+      <!-- Honeypot anti-bot (invisibile) -->
+      <div style="display:none"><input type="text" id="f-trap" name="trap" tabindex="-1" autocomplete="off"></div>
       <div class="field form-full"><label>Descrizione del problema</label><textarea id="f-descrizione" placeholder="Descrivi il problema nel dettaglio…" required></textarea></div>
       <div class="field form-full" style="flex-direction:row;align-items:center;gap:10px">
         <button type="submit" class="btn-primary" id="submit-btn">Invia richiesta</button>
@@ -356,9 +358,44 @@ function toggleAdmin(){
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────────
+// ── RATE LIMITING ────────────────────────────────────────────────────────
+function checkRateLimit() {
+  const key = 'demm_rl';
+  const now = Date.now();
+  const window = 60 * 60 * 1000; // 1 ora
+  const maxTickets = 3;
+  let data = JSON.parse(localStorage.getItem(key) || '{"count":0,"start":0}');
+  if (now - data.start > window) { data = { count: 0, start: now }; }
+  if (data.count >= maxTickets) {
+    const minLeft = Math.ceil((window - (now - data.start)) / 60000);
+    return { ok: false, msg: `Hai già inviato ${maxTickets} ticket nell'ultima ora. Riprova tra ${minLeft} minuti.` };
+  }
+  data.count++;
+  localStorage.setItem(key, JSON.stringify(data));
+  return { ok: true };
+}
+
 async function submitTicket(e) {
   e.preventDefault();
   const btn = document.getElementById('submit-btn');
+
+  // Honeypot anti-bot
+  if (document.getElementById('f-trap').value !== '') return;
+
+  // Validazione dominio email
+  const emailVal = document.getElementById('f-email').value.trim();
+  if (!emailVal.endsWith('@unisannio.it')) {
+    showToast('err', 'Inserisci un indirizzo email istituzionale <strong>@unisannio.it</strong>.');
+    return;
+  }
+
+  // Rate limiting
+  const rl = checkRateLimit();
+  if (!rl.ok) {
+    showToast('err', rl.msg);
+    return;
+  }
+
   btn.textContent='Invio in corso…'; btn.disabled=true;
 
   const priorita = document.querySelector('input[name="priorita"]:checked')?.value||'Bassa';
