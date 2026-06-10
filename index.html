@@ -229,15 +229,60 @@ function checkRateLimit(){
   return {ok:true};
 }
 
-// Invio tramite fetch no-cors — funziona su tutti i browser incluso Safari
+// Invio tramite JSONP con doppio fallback per Safari
 async function inviaGAS(params){
-  const qs = new URLSearchParams(params).toString();
+  // Prima prova JSONP
   try {
-    await fetch(GAS_URL+'?'+qs, { method:'GET', mode:'no-cors' });
-    return {ok:true};
+    const result = await jsonpCall(params);
+    return result;
   } catch(err){
-    return {ok:false, error:err.message};
+    // Fallback: iframe invisibile (funziona su Safari)
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const url = GAS_URL + '?' + qs;
+      await new Promise((resolve) => {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        iframe.onload = () => { iframe.remove(); resolve(); };
+        iframe.onerror = () => { iframe.remove(); resolve(); };
+        setTimeout(() => { iframe.remove(); resolve(); }, 5000);
+        document.body.appendChild(iframe);
+      });
+      return {ok:true};
+    } catch(e){
+      return {ok:false, error:e.message};
+    }
   }
+}
+
+// JSONP
+function jsonpCall(params){
+  return new Promise((resolve, reject) => {
+    const cbName = 'cb_' + Date.now();
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      if(scriptEl) scriptEl.remove();
+      reject(new Error('timeout'));
+    }, 8000);
+    window[cbName] = (data) => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      if(scriptEl) scriptEl.remove();
+      resolve(data);
+    };
+    params.callback = cbName;
+    const qs = new URLSearchParams(params).toString();
+    const scriptEl = document.createElement('script');
+    scriptEl.onerror = () => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      scriptEl.remove();
+      reject(new Error('script error'));
+    };
+    scriptEl.src = GAS_URL + '?' + qs;
+    document.head.appendChild(scriptEl);
+  });
 }
 
 function showView(name){
