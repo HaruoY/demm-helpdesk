@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="60">
+<title>DEMM Help Desk — Stato</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F4F2ED; --surface:#FFF; --border:#D8D4CB;
+    --text:#1A1917; --muted:#7A7770;
+    --accent:#1E4D8C; --accent-light:#E8EEF7;
+    --teal:#0D6B52; --teal-light:#E3F2EC;
+    --amber:#8A4F0A; --amber-light:#FDF0E0;
+    --red:#9B2B2B; --red-light:#FDEAEA;
+    --green:#2D6A2D; --green-light:#E8F5E8;
+    --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+  .header{background:var(--text);color:white;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+  .header-brand{display:flex;align-items:center;gap:12px;}
+  .header-logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:white;}
+  .header-title{font-size:14px;font-weight:500;}
+  .header-sub{font-size:11px;color:rgba(255,255,255,0.5);font-family:var(--mono);}
+  .header-link{color:rgba(255,255,255,0.6);font-size:13px;text-decoration:none;padding:6px 14px;border-radius:6px;transition:all .15s;}
+  .header-link:hover{color:white;background:rgba(255,255,255,0.08);}
+  .container{max-width:860px;margin:0 auto;padding:32px;}
+  .page-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;}
+  .page-header h1{font-size:22px;font-weight:600;letter-spacing:-.3px;margin-bottom:4px;}
+  .page-header p{font-size:14px;color:var(--muted);}
+  .refresh-info{font-size:12px;color:var(--muted);font-family:var(--mono);}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+  .stat-num{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-1px;}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:4px;}
+  .section-title{font-size:16px;font-weight:600;margin-bottom:14px;margin-top:28px;}
+  .sede-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+  .sede-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+  .sede-name{font-size:14px;font-weight:500;margin-bottom:8px;}
+  .sede-stats{display:flex;gap:12px;}
+  .sede-stat{font-size:13px;color:var(--muted);}
+  .sede-stat span{font-weight:600;color:var(--text);}
+  .ticket-list{display:flex;flex-direction:column;gap:8px;}
+  .ticket-row{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;}
+  .tag{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:4px;font-weight:500;}
+  .tag-aperto{background:var(--accent-light);color:var(--accent);}
+  .tag-lavorazione{background:var(--teal-light);color:var(--teal);}
+  .tag-alta{background:var(--red-light);color:var(--red);}
+  .tag-media{background:var(--amber-light);color:var(--amber);}
+  .tag-bassa{background:var(--green-light);color:var(--green);}
+  .ticket-info{flex:1;}
+  .ticket-cat{font-size:14px;font-weight:500;}
+  .ticket-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+  .ticket-id{font-family:var(--mono);font-size:11px;color:var(--muted);background:#F4F2ED;padding:3px 8px;border-radius:5px;white-space:nowrap;}
+  .empty{text-align:center;padding:40px;color:var(--muted);}
+  .empty-icon{font-size:28px;margin-bottom:8px;}
+  .status-ok{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}.sede-grid{grid-template-columns:1fr;}.container{padding:20px 16px;}.header{padding:0 16px;}.header-sub{display:none;}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">IT</div>
+    <div>
+      <div class="header-title">DEMM Help Desk</div>
+      <div class="header-sub">Università degli Studi del Sannio</div>
+    </div>
+  </div>
+  <a href="https://haruoy.github.io/demm-helpdesk" class="header-link">+ Nuovo ticket</a>
+</header>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>Stato del servizio</h1>
+      <p>Panoramica dei ticket aperti — aggiornamento automatico ogni minuto</p>
+    </div>
+    <div>
+      <div class="status-ok"><div class="dot"></div> Servizio attivo</div>
+      <div class="refresh-info" style="margin-top:6px;text-align:right" id="last-update"></div>
+    </div>
+  </div>
+
+  <!-- Statistiche -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="count-aperti" style="color:var(--accent)">—</div>
+      <div class="stat-label">Aperti</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="count-lavorazione" style="color:var(--teal)">—</div>
+      <div class="stat-label">In lavorazione</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="count-chiusi" style="color:var(--muted)">—</div>
+      <div class="stat-label">Chiusi</div>
+    </div>
+  </div>
+
+  <!-- Per sede -->
+  <div class="section-title">Per sede</div>
+  <div class="sede-grid" id="sede-grid"></div>
+
+  <!-- Ticket aperti -->
+  <div class="section-title">Ticket aperti e in lavorazione</div>
+  <div class="ticket-list" id="ticket-list"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'demm_tickets_v3';
+const SEDI = ['Via delle Puglie', 'Palazzo De Simone', 'Sede distaccata', 'Da remoto'];
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('it-IT', {day:'2-digit', month:'short'}) + ' ' +
+         d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+}
+
+function render() {
+  const tickets = load();
+  const aperti    = tickets.filter(t => t.stato === 'Aperto');
+  const lavora    = tickets.filter(t => t.stato === 'In lavorazione');
+  const chiusi    = tickets.filter(t => t.stato === 'Chiuso');
+  const attivi    = [...aperti, ...lavora];
+
+  document.getElementById('count-aperti').textContent    = aperti.length;
+  document.getElementById('count-lavorazione').textContent = lavora.length;
+  document.getElementById('count-chiusi').textContent    = chiusi.length;
+  document.getElementById('last-update').textContent     = 'Aggiornato: ' + new Date().toLocaleTimeString('it-IT');
+
+  // Per sede
+  const sedeGrid = document.getElementById('sede-grid');
+  sedeGrid.innerHTML = SEDI.map(sede => {
+    const tot = attivi.filter(t => t.sede === sede).length;
+    const alt = attivi.filter(t => t.sede === sede && t.priorita === 'Alta').length;
+    return `<div class="sede-card">
+      <div class="sede-name">${sede}</div>
+      <div class="sede-stats">
+        <div class="sede-stat">Attivi: <span>${tot}</span></div>
+        ${alt > 0 ? `<div class="sede-stat">🔴 Alta: <span>${alt}</span></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Lista ticket attivi
+  const list = document.getElementById('ticket-list');
+  if (!attivi.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🎉</div><p>Nessun ticket aperto al momento</p></div>';
+    return;
+  }
+
+  // Ordina per priorità
+  const ordine = { 'Alta': 0, 'Media': 1, 'Bassa': 2 };
+  attivi.sort((a, b) => (ordine[a.priorita] || 2) - (ordine[b.priorita] || 2));
+
+  list.innerHTML = attivi.map(t => {
+    const statoClass = t.stato === 'Aperto' ? 'aperto' : 'lavorazione';
+    const prioClass  = 'tag-' + t.priorita.toLowerCase();
+    return `<div class="ticket-row">
+      <div class="ticket-id">${t.id}</div>
+      <div class="ticket-info">
+        <div class="ticket-cat">${t.categoria}</div>
+        <div class="ticket-meta">${t.sede} · ${fmtDate(t.createdAt)}</div>
+      </div>
+      <span class="tag ${prioClass}">${t.priorita}</span>
+      <span class="tag tag-${statoClass}">${t.stato}</span>
+    </div>`;
+  }).join('');
+}
+
+render();
+setInterval(render, 10000);
+</script>
+</body>
+</html>
