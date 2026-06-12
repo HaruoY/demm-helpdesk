@@ -6,103 +6,96 @@
 <title>DEMM Help Desk — Sannio</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#F4F2ED; --surface:#FFF; --surface2:#EDEAE3; --border:#D8D4CB;
-    --text:#1A1917; --muted:#7A7770;
-    --accent:#1E4D8C; --accent-light:#E8EEF7;
-    --teal:#0D6B52; --teal-light:#E3F2EC;
-    --amber:#8A4F0A; --amber-light:#FDF0E0;
-    --red:#9B2B2B; --red-light:#FDEAEA;
-    --green:#2D6A2D; --green-light:#E8F5E8;
-    --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
-  .header{background:var(--text);color:white;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
-  .header-brand{display:flex;align-items:center;gap:12px;}
-  .header-logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:white;}
-  .header-title{font-size:14px;font-weight:500;}
-  .header-sub{font-size:11px;color:rgba(255,255,255,0.5);font-family:var(--mono);}
-  .header-nav{display:flex;gap:4px;}
-  .nav-btn{padding:6px 14px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-family:var(--sans);font-size:13px;cursor:pointer;transition:all .15s;}
-  .nav-btn:hover{color:white;background:rgba(255,255,255,0.08);}
-  .nav-btn.active{color:white;background:rgba(255,255,255,0.14);}
-  .nav-badge{display:inline-flex;align-items:center;justify-content:center;background:#E05C5C;color:white;font-size:10px;font-family:var(--mono);width:16px;height:16px;border-radius:50%;margin-left:5px;vertical-align:middle;}
-  .view{display:none;padding:32px;max-width:860px;margin:0 auto;}
-  .view.active{display:block;}
-  .page-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
-  .page-header h1{font-size:22px;font-weight:600;letter-spacing:-.3px;margin-bottom:4px;}
-  .page-header p{font-size:14px;color:var(--muted);font-weight:300;}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .form-full{grid-column:1/-1;}
-  .field{display:flex;flex-direction:column;gap:6px;}
-  .field label{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:var(--mono);}
-  .field input,.field select,.field textarea{padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--sans);font-size:14px;color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none;appearance:none;-webkit-appearance:none;}
-  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
-  .field textarea{resize:vertical;min-height:100px;line-height:1.6;}
-  .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7770' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
-  .priority-group{display:flex;gap:8px;}
-  .priority-option{flex:1;}
-  .priority-option input{display:none;}
-  .priority-option label{display:block;text-align:center;padding:8px 4px;border-radius:7px;border:1.5px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted);font-family:var(--sans);}
-  .priority-option input:checked+label.p-bassa{border-color:var(--green);background:var(--green-light);color:var(--green);}
-  .priority-option input:checked+label.p-media{border-color:var(--amber);background:var(--amber-light);color:var(--amber);}
-  .priority-option input:checked+label.p-alta{border-color:var(--red);background:var(--red-light);color:var(--red);}
-  .btn-primary{padding:12px 28px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;}
-  .btn-primary:hover{background:#163D72;transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,77,140,.2);}
-  .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-  .btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;color:var(--text);transition:all .12s;}
-  .btn-sm:hover{background:var(--surface2);}
-  .btn-sm.danger{border-color:#E05C5C;color:var(--red);}
-  .btn-sm.danger:hover{background:var(--red-light);}
-  .btn-sm.success{border-color:var(--teal);color:var(--teal);}
-  .btn-sm.success:hover{background:var(--teal-light);}
-  .btn-sm.warning{border-color:var(--amber);color:var(--amber);}
-  .btn-sm.warning:hover{background:var(--amber-light);}
-  .toast{display:none;align-items:center;gap:12px;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:14px;animation:slideIn .3s ease;}
-  .toast.show{display:flex;}
-  .toast.ok{background:var(--green-light);border:1px solid var(--green);color:var(--green);}
-  .toast.err{background:var(--red-light);border:1px solid var(--red);color:var(--red);}
-  @keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-  .ticket-list{display:flex;flex-direction:column;gap:10px;}
-  .ticket-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;transition:box-shadow .15s;}
-  .ticket-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
-  .ticket-id{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 8px;border-radius:5px;white-space:nowrap;margin-top:2px;}
-  .ticket-title{font-size:14px;font-weight:500;margin-bottom:3px;}
-  .ticket-meta{font-size:12px;color:var(--muted);}
-  .ticket-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
-  .tag{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:4px;font-weight:500;}
-  .tag-cat{background:var(--accent-light);color:var(--accent);}
-  .tag-bassa{background:var(--green-light);color:var(--green);}
-  .tag-media{background:var(--amber-light);color:var(--amber);}
-  .tag-alta{background:var(--red-light);color:var(--red);}
-  .tag-aperto{background:var(--accent-light);color:var(--accent);}
-  .tag-chiuso{background:var(--surface2);color:var(--muted);}
-  .tag-in-lavorazione{background:var(--teal-light);color:var(--teal);}
-  .ticket-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
-  .filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
-  .filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .12s;}
-  .filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
-  .stat-num{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1px;}
-  .stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
-  .empty{text-align:center;padding:48px 20px;color:var(--muted);}
-  .empty-icon{font-size:32px;margin-bottom:10px;}
-  .empty h3{font-size:15px;font-weight:500;margin-bottom:4px;color:var(--text);}
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:20px;}
-  .modal-overlay.open{display:flex;}
-  .modal{background:var(--surface);border-radius:14px;padding:28px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;animation:modalIn .2s ease;}
-  @keyframes modalIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
-  .modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
-  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
-  .modal-row{margin-bottom:14px;}
-  .modal-row label{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:4px;}
-  .modal-row p{font-size:14px;line-height:1.6;}
-  .modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
-  .note-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-family:var(--sans);font-size:13px;resize:none;min-height:60px;outline:none;color:var(--text);}
-  .note-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
-  @media(max-width:600px){.view{padding:20px 16px;}.form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}.header{padding:0 16px;}.header-sub{display:none;}}
+:root{--bg:#F4F2ED;--surface:#FFF;--surface2:#EDEAE3;--border:#D8D4CB;--text:#1A1917;--muted:#7A7770;--accent:#1E4D8C;--accent-light:#E8EEF7;--teal:#0D6B52;--teal-light:#E3F2EC;--amber:#8A4F0A;--amber-light:#FDF0E0;--red:#9B2B2B;--red-light:#FDEAEA;--green:#2D6A2D;--green-light:#E8F5E8;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+.header{background:var(--text);color:white;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.header-logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:white;}
+.header-title{font-size:14px;font-weight:500;}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.5);font-family:var(--mono);}
+.header-nav{display:flex;gap:4px;}
+.nav-btn{padding:6px 14px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.6);font-family:var(--sans);font-size:13px;cursor:pointer;transition:all .15s;}
+.nav-btn:hover{color:white;background:rgba(255,255,255,0.08);}
+.nav-btn.active{color:white;background:rgba(255,255,255,0.14);}
+.nav-badge{display:inline-flex;align-items:center;justify-content:center;background:#E05C5C;color:white;font-size:10px;font-family:var(--mono);width:16px;height:16px;border-radius:50%;margin-left:5px;vertical-align:middle;}
+.view{display:none;padding:32px;max-width:860px;margin:0 auto;}
+.view.active{display:block;}
+.page-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.page-header h1{font-size:22px;font-weight:600;letter-spacing:-.3px;margin-bottom:4px;}
+.page-header p{font-size:14px;color:var(--muted);font-weight:300;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:var(--mono);}
+.field input,.field select,.field textarea{padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-family:var(--sans);font-size:14px;color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none;appearance:none;-webkit-appearance:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
+.field textarea{resize:vertical;min-height:100px;line-height:1.6;}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7770' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.priority-group{display:flex;gap:8px;}
+.priority-option{flex:1;}
+.priority-option input{display:none;}
+.priority-option label{display:block;text-align:center;padding:8px 4px;border-radius:7px;border:1.5px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted);font-family:var(--sans);}
+.priority-option input:checked+label.p-bassa{border-color:var(--green);background:var(--green-light);color:var(--green);}
+.priority-option input:checked+label.p-media{border-color:var(--amber);background:var(--amber-light);color:var(--amber);}
+.priority-option input:checked+label.p-alta{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.btn-primary{padding:12px 28px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-primary:hover{background:#163D72;transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;color:var(--text);transition:all .12s;}
+.btn-sm:hover{background:var(--surface2);}
+.btn-sm.danger{border-color:#E05C5C;color:var(--red);}
+.btn-sm.danger:hover{background:var(--red-light);}
+.btn-sm.success{border-color:var(--teal);color:var(--teal);}
+.btn-sm.success:hover{background:var(--teal-light);}
+.btn-sm.warning{border-color:var(--amber);color:var(--amber);}
+.btn-sm.warning:hover{background:var(--amber-light);}
+.btn-sm.accent{border-color:var(--accent);color:var(--accent);}
+.btn-sm.accent:hover{background:var(--accent-light);}
+.toast{display:none;align-items:center;gap:12px;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:14px;animation:slideIn .3s ease;}
+.toast.show{display:flex;}
+.toast.ok{background:var(--green-light);border:1px solid var(--green);color:var(--green);}
+.toast.err{background:var(--red-light);border:1px solid var(--red);color:var(--red);}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.ticket-list{display:flex;flex-direction:column;gap:10px;}
+.ticket-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;transition:box-shadow .15s;}
+.ticket-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.ticket-id{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 8px;border-radius:5px;white-space:nowrap;margin-top:2px;}
+.ticket-title{font-size:14px;font-weight:500;margin-bottom:3px;}
+.ticket-meta{font-size:12px;color:var(--muted);}
+.ticket-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.tag{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:4px;font-weight:500;}
+.tag-cat{background:var(--accent-light);color:var(--accent);}
+.tag-bassa{background:var(--green-light);color:var(--green);}
+.tag-media{background:var(--amber-light);color:var(--amber);}
+.tag-alta{background:var(--red-light);color:var(--red);}
+.tag-aperto{background:var(--accent-light);color:var(--accent);}
+.tag-chiuso{background:var(--surface2);color:var(--muted);}
+.tag-in-lavorazione{background:var(--teal-light);color:var(--teal);}
+.ticket-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .12s;}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.stat-num{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1px;}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:32px;margin-bottom:10px;}
+.empty h3{font-size:15px;font-weight:500;margin-bottom:4px;color:var(--text);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:14px;padding:28px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
+.modal-row{margin-bottom:14px;}
+.modal-row label{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:4px;}
+.modal-row p{font-size:14px;line-height:1.6;}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.note-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-family:var(--sans);font-size:13px;resize:none;min-height:60px;outline:none;color:var(--text);}
+.note-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,140,.1);}
+@media(max-width:600px){.view{padding:20px 16px;}.form-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}.header{padding:0 16px;}.header-sub{display:none;}}
 </style>
 </head>
 <body>
@@ -125,6 +118,7 @@
   </nav>
 </header>
 
+<!-- NUOVO TICKET -->
 <div class="view active" id="view-nuovo">
   <div class="page-header">
     <h1>Richiedi assistenza</h1>
@@ -136,15 +130,55 @@
     <div class="form-grid">
       <div class="field"><label>Nome e cognome</label><input type="text" id="f-nome" placeholder="Es. Mario Rossi" required></div>
       <div class="field"><label>Email istituzionale</label><input type="email" id="f-email" placeholder="nome@unisannio.it o nome@studenti.unisannio.it" required></div>
-      <div class="field"><label>Ruolo</label><select id="f-ruolo" required><option value="">Seleziona…</option><option>Docente</option><option>Ricercatore / RTD</option><option>Personale TAB</option><option>Dottorando</option><option>Assegnista</option></select></div>
-      <div class="field"><label>Sede</label><select id="f-sede" required><option value="">Seleziona…</option><option>Via delle Puglie</option><option>Palazzo De Simone</option><option>Da remoto</option></select></div>
-      <div class="field"><label>Categoria intervento</label><select id="f-categoria" required><option value="">Seleziona…</option><option>PC / Postazione di lavoro</option><option>Stampante / Periferica</option><option>Rete / Wi-Fi</option><option>Proiettore / Aula multimediale</option><option>Moodle / Piattaforma e-learning</option><option>Google Workspace / Email</option><option>Firma digitale / SPID</option><option>Software / Licenze</option><option>Meet / Videoconferenza</option><option>Altro</option></select></div>
-      <div class="field"><label>Priorità</label><div class="priority-group"><div class="priority-option"><input type="radio" name="priorita" id="p-bassa" value="Bassa" checked><label for="p-bassa" class="p-bassa">🟢 Bassa</label></div><div class="priority-option"><input type="radio" name="priorita" id="p-media" value="Media"><label for="p-media" class="p-media">🟡 Media</label></div><div class="priority-option"><input type="radio" name="priorita" id="p-alta" value="Alta"><label for="p-alta" class="p-alta">🔴 Alta</label></div></div></div>
+      <div class="field">
+        <label>Ruolo</label>
+        <select id="f-ruolo" required>
+          <option value="">Seleziona…</option>
+          <option>Docente</option>
+          <option>Ricercatore / RTD</option>
+          <option>Personale TAB</option>
+          <option>Dottorando</option>
+          <option>Assegnista</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sede</label>
+        <select id="f-sede" required>
+          <option value="">Seleziona…</option>
+          <option>Via delle Puglie</option>
+          <option>Palazzo De Simone</option>
+          <option>Da remoto</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Categoria intervento</label>
+        <select id="f-categoria" required>
+          <option value="">Seleziona…</option>
+          <option>PC / Postazione di lavoro</option>
+          <option>Stampante / Periferica</option>
+          <option>Rete / Wi-Fi</option>
+          <option>Proiettore / Aula multimediale</option>
+          <option>Moodle / Piattaforma e-learning</option>
+          <option>Google Workspace / Email</option>
+          <option>Firma digitale / SPID</option>
+          <option>Software / Licenze</option>
+          <option>Meet / Videoconferenza</option>
+          <option>Altro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Priorità</label>
+        <div class="priority-group">
+          <div class="priority-option"><input type="radio" name="priorita" id="p-bassa" value="Bassa" checked><label for="p-bassa" class="p-bassa">🟢 Bassa</label></div>
+          <div class="priority-option"><input type="radio" name="priorita" id="p-media" value="Media"><label for="p-media" class="p-media">🟡 Media</label></div>
+          <div class="priority-option"><input type="radio" name="priorita" id="p-alta" value="Alta"><label for="p-alta" class="p-alta">🔴 Alta</label></div>
+        </div>
+      </div>
       <div class="field form-full"><label>Descrizione del problema</label><textarea id="f-descrizione" placeholder="Descrivi il problema nel dettaglio…" required></textarea></div>
       <div class="field form-full">
         <label>Data e ora preferita per l'intervento</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <input type="date" id="f-data" min="" required>
+          <input type="date" id="f-data" required>
           <select id="f-ora" required>
             <option value="">Seleziona orario…</option>
             <option>08:30 - 09:30</option>
@@ -156,18 +190,19 @@
             <option>16:00 - 17:00</option>
           </select>
         </div>
-        <span style="font-size:12px;color:var(--muted);margin-top:4px">La data è indicativa — il tecnico confermerà o proporrà un orario alternativo</span>
+        <span style="font-size:12px;color:var(--muted);margin-top:4px;display:block">La data è indicativa — il tecnico confermerà o proporrà un orario alternativo</span>
       </div>
       <!-- Honeypot anti-bot -->
       <div style="display:none"><input type="text" id="f-trap" tabindex="-1" autocomplete="off"></div>
       <div class="field form-full" style="flex-direction:row;align-items:center;gap:10px">
         <button type="submit" class="btn-primary" id="submit-btn">Invia richiesta</button>
-        <span style="font-size:12px;color:var(--muted)">Riceverai conferma via email @unisannio.it</span>
+        <span style="font-size:12px;color:var(--muted)">Riceverai conferma via email</span>
       </div>
     </div>
   </form>
 </div>
 
+<!-- STORICO -->
 <div class="view" id="view-storico">
   <div class="page-header"><h1>I miei ticket</h1><p>Storico delle tue richieste di assistenza</p></div>
   <div class="filters">
@@ -179,6 +214,7 @@
   <div class="ticket-list" id="storico-list"></div>
 </div>
 
+<!-- ADMIN -->
 <div class="view" id="view-admin">
   <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end">
     <div><h1>Pannello admin</h1><p>Francesco Moleti — Tecnico informatico DEMM</p></div>
@@ -194,11 +230,53 @@
   <div class="ticket-list" id="admin-list"></div>
 </div>
 
+<!-- MODAL CONFERMA INTERVENTO -->
+<div class="modal-overlay" id="modal-conferma" onclick="closeModalConferma(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 style="font-size:17px;font-weight:600">📅 Conferma intervento</h2>
+      <button class="modal-close" onclick="closeModalConferma()">✕</button>
+    </div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Conferma o modifica la data proposta. Verrà inviata una email di conferma al richiedente.</p>
+    <div class="modal-row">
+      <label>Data intervento</label>
+      <input type="date" id="conferma-data" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;width:100%;outline:none;">
+    </div>
+    <div class="modal-row" style="margin-top:12px">
+      <label>Orario</label>
+      <select id="conferma-ora" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;width:100%;outline:none;appearance:none;background:white;">
+        <option>08:30 - 09:30</option>
+        <option>09:30 - 10:30</option>
+        <option>10:30 - 11:30</option>
+        <option>11:30 - 12:30</option>
+        <option>14:00 - 15:00</option>
+        <option>15:00 - 16:00</option>
+        <option>16:00 - 17:00</option>
+      </select>
+    </div>
+    <div class="modal-row" style="margin-top:12px">
+      <label>Note per il richiedente (opzionale)</label>
+      <textarea class="note-input" id="conferma-note" placeholder="Es. Ci vediamo in ufficio, porta il PC…"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-primary" onclick="inviaConferma()" style="padding:10px 20px">Conferma e invia email</button>
+      <button class="btn-sm" onclick="closeModalConferma()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHIUSURA UTENTE -->
 <div class="modal-overlay" id="modal-chiudi" onclick="closeModalChiudi(event)">
   <div class="modal">
-    <div class="modal-header"><h2 style="font-size:17px;font-weight:600">Chiudi ticket</h2><button class="modal-close" onclick="closeModalChiudi()">✕</button></div>
+    <div class="modal-header">
+      <h2 style="font-size:17px;font-weight:600">Chiudi ticket</h2>
+      <button class="modal-close" onclick="closeModalChiudi()">✕</button>
+    </div>
     <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Descrivi brevemente come è stato risolto il problema.</p>
-    <div class="modal-row"><label>Esito / Note di chiusura</label><textarea class="note-input" id="chiudi-esito" placeholder="Es. Problema risolto, PC funzionante."></textarea></div>
+    <div class="modal-row">
+      <label>Esito / Note di chiusura</label>
+      <textarea class="note-input" id="chiudi-esito" placeholder="Es. Problema risolto, PC funzionante."></textarea>
+    </div>
     <div style="display:flex;gap:8px;margin-top:12px">
       <button class="btn-primary" onclick="confermaChiusura()" style="padding:10px 20px">Conferma chiusura</button>
       <button class="btn-sm" onclick="closeModalChiudi()">Annulla</button>
@@ -206,6 +284,7 @@
   </div>
 </div>
 
+<!-- MODAL DETTAGLIO -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal" id="modal-content"></div>
 </div>
@@ -213,12 +292,14 @@
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6uc3n-ifFWOhcuVnGujxBejlmN6Hb1At_Y_jKs11-eDXabD7ZtSqV-MB3Z5v8gG5iVA/exec';
 const STORAGE_KEY = 'demm_tickets_v3';
+const ADMIN_PWD = 'Bacon_2017';
 
 let tickets = [];
 let isAdmin = false;
-let currentFilter = { storico:'tutti', admin:'tutti' };
+let currentFilter = {storico:'tutti', admin:'tutti'};
 let currentEmail = '';
 let ticketDaChiudere = null;
+let ticketDaConfermare = null;
 
 function load(){ try{ tickets=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ tickets=[]; } }
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets)); }
@@ -232,76 +313,38 @@ function fmtDate(iso){
   const d=new Date(iso);
   return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // Rate limiting
 function checkRateLimit(){
   const key='demm_rl', now=Date.now(), win=3600000, max=3;
   let d=JSON.parse(localStorage.getItem(key)||'{"count":0,"start":0}');
   if(now-d.start>win) d={count:0,start:now};
-  if(d.count>=max){
-    const m=Math.ceil((win-(now-d.start))/60000);
-    return {ok:false,msg:'Hai già inviato '+max+' ticket nell\'ultima ora. Riprova tra '+m+' minuti.'};
-  }
+  if(d.count>=max){ const m=Math.ceil((win-(now-d.start))/60000); return {ok:false,msg:'Hai già inviato '+max+' ticket nell\'ultima ora. Riprova tra '+m+' minuti.'}; }
   d.count++; localStorage.setItem(key,JSON.stringify(d));
   return {ok:true};
 }
 
-// Invio tramite JSONP con doppio fallback per Safari
-async function inviaGAS(params){
-  // Prima prova JSONP
-  try {
-    const result = await jsonpCall(params);
-    return result;
-  } catch(err){
-    // Fallback: iframe invisibile (funziona su Safari)
-    try {
-      const qs = new URLSearchParams(params).toString();
-      const url = GAS_URL + '?' + qs;
-      await new Promise((resolve) => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        iframe.onload = () => { iframe.remove(); resolve(); };
-        iframe.onerror = () => { iframe.remove(); resolve(); };
-        setTimeout(() => { iframe.remove(); resolve(); }, 5000);
-        document.body.appendChild(iframe);
-      });
-      return {ok:true};
-    } catch(e){
-      return {ok:false, error:e.message};
-    }
-  }
-}
-
 // JSONP
 function jsonpCall(params){
-  return new Promise((resolve, reject) => {
-    const cbName = 'cb_' + Date.now();
-    const timeout = setTimeout(() => {
-      delete window[cbName];
-      if(scriptEl) scriptEl.remove();
-      reject(new Error('timeout'));
-    }, 8000);
-    window[cbName] = (data) => {
-      clearTimeout(timeout);
-      delete window[cbName];
-      if(scriptEl) scriptEl.remove();
-      resolve(data);
-    };
-    params.callback = cbName;
-    const qs = new URLSearchParams(params).toString();
-    const scriptEl = document.createElement('script');
-    scriptEl.onerror = () => {
-      clearTimeout(timeout);
-      delete window[cbName];
-      scriptEl.remove();
-      reject(new Error('script error'));
-    };
-    scriptEl.src = GAS_URL + '?' + qs;
+  return new Promise((resolve,reject)=>{
+    const cbName='cb_'+Date.now(); let settled=false;
+    const timeout=setTimeout(()=>{ if(settled)return; settled=true; delete window[cbName]; if(scriptEl)scriptEl.remove(); reject(new Error('timeout')); },8000);
+    window[cbName]=(data)=>{ if(settled)return; settled=true; clearTimeout(timeout); delete window[cbName]; if(scriptEl)scriptEl.remove(); resolve(data); };
+    params.callback=cbName;
+    const qs=new URLSearchParams(params).toString();
+    const scriptEl=document.createElement('script');
+    scriptEl.onerror=()=>{ if(settled)return; settled=true; clearTimeout(timeout); delete window[cbName]; scriptEl.remove(); resolve({ok:true}); };
+    scriptEl.src=GAS_URL+'?'+qs;
     document.head.appendChild(scriptEl);
   });
 }
 
+async function inviaGAS(params){
+  try{ return await jsonpCall(params); }catch(e){ return {ok:false}; }
+}
+
+// NAV
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -323,39 +366,30 @@ function toggleAdmin(){
       document.getElementById('admin-toggle').style.color='rgba(255,255,255,0.2)';
       showView('nuovo');
     } else {
-      const pwd = prompt('Password amministratore:');
-      if(pwd === 'Bacon_2017'){
+      const pwd=prompt('Password amministratore:');
+      if(pwd===ADMIN_PWD){
         isAdmin=true;
         document.getElementById('admin-nav-btn').style.display='';
         document.getElementById('admin-toggle').style.color='rgba(255,255,255,0.7)';
         showView('admin');
-      } else if(pwd !== null){
-        alert('Password errata.');
-      }
+      } else if(pwd!==null){ alert('Password errata.'); }
     }
   }
 }
 
+// SUBMIT
 async function submitTicket(e){
   e.preventDefault();
-
-  // Honeypot
   if(document.getElementById('f-trap').value!=='') return;
-
-  // Validazione email
   const email=document.getElementById('f-email').value.trim();
-  if(!email.endsWith('@unisannio.it') && !email.endsWith('@studenti.unisannio.it')){
-    showToast('err','Inserisci un indirizzo email istituzionale <strong>@unisannio.it</strong>.');
+  if(!email.endsWith('@unisannio.it')&&!email.endsWith('@studenti.unisannio.it')){
+    showToast('err','Inserisci un indirizzo email <strong>@unisannio.it</strong> o <strong>@studenti.unisannio.it</strong>.');
     return;
   }
-
-  // Rate limiting
   const rl=checkRateLimit();
   if(!rl.ok){ showToast('err',rl.msg); return; }
-
   const btn=document.getElementById('submit-btn');
   btn.textContent='Invio in corso…'; btn.disabled=true;
-
   const priorita=document.querySelector('input[name="priorita"]:checked')?.value||'Bassa';
   const ticket={
     id:genId(), createdAt:new Date().toISOString(),
@@ -364,19 +398,12 @@ async function submitTicket(e){
     sede:document.getElementById('f-sede').value,
     categoria:document.getElementById('f-categoria').value,
     priorita, descrizione:document.getElementById('f-descrizione').value.trim(),
+    dataPreferita:document.getElementById('f-data').value,
+    oraPreferita:document.getElementById('f-ora').value,
     stato:'Aperto', note:''
   };
-
   tickets.unshift(ticket); save(); currentEmail=ticket.email;
-
-  // Invia allo script GAS
-  await inviaGAS({
-    action:'nuovo_ticket',
-    id:ticket.id, nome:ticket.nome, email:ticket.email,
-    ruolo:ticket.ruolo, sede:ticket.sede, categoria:ticket.categoria,
-    priorita:ticket.priorita, descrizione:ticket.descrizione
-  });
-
+  await inviaGAS({action:'nuovo_ticket', id:ticket.id, nome:ticket.nome, email:ticket.email, ruolo:ticket.ruolo, sede:ticket.sede, categoria:ticket.categoria, priorita:ticket.priorita, descrizione:ticket.descrizione, dataPreferita:ticket.dataPreferita, oraPreferita:ticket.oraPreferita});
   btn.textContent='Invia richiesta'; btn.disabled=false;
   document.getElementById('ticket-form').reset();
   document.getElementById('p-bassa').checked=true;
@@ -391,6 +418,7 @@ function showToast(type,msg){
   setTimeout(()=>t.classList.remove('show'),7000);
 }
 
+// STORICO
 function filterStorico(f,btn){
   currentFilter.storico=f;
   document.querySelectorAll('#view-storico .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -399,19 +427,14 @@ function filterStorico(f,btn){
 
 function renderStorico(){
   const list=document.getElementById('storico-list');
-  if(!currentEmail){
-    const em=prompt('Inserisci la tua email istituzionale:');
-    if(em) currentEmail=em.trim(); else return;
-  }
+  if(!currentEmail){ const em=prompt('Inserisci la tua email istituzionale:'); if(em) currentEmail=em.trim(); else return; }
   let mine=tickets.filter(t=>t.email.toLowerCase()===currentEmail.toLowerCase());
   if(currentFilter.storico!=='tutti') mine=mine.filter(t=>t.stato===currentFilter.storico);
-  if(!mine.length){
-    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><h3>Nessun ticket trovato</h3><p>Non hai ancora inviato richieste</p></div>';
-    return;
-  }
+  if(!mine.length){ list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><h3>Nessun ticket trovato</h3><p>Non hai ancora inviato richieste</p></div>'; return; }
   list.innerHTML=mine.map(t=>ticketCard(t,false)).join('');
 }
 
+// ADMIN
 function filterAdmin(f,btn){
   currentFilter.admin=f;
   document.querySelectorAll('#view-admin .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -423,10 +446,7 @@ function renderAdmin(){
   const list=document.getElementById('admin-list');
   let data=[...tickets];
   if(currentFilter.admin!=='tutti') data=data.filter(t=>t.stato===currentFilter.admin);
-  if(!data.length){
-    list.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>Tutto a posto</h3><p>Nessun ticket in questa categoria</p></div>';
-    return;
-  }
+  if(!data.length){ list.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>Tutto a posto</h3><p>Nessun ticket in questa categoria</p></div>'; return; }
   list.innerHTML=data.map(t=>ticketCard(t,true)).join('');
   updateBadge();
 }
@@ -448,22 +468,25 @@ function updateBadge(){
   badge.style.display=open>0?'':'none'; badge.textContent=open;
 }
 
+// TICKET CARD
 function ticketCard(t,admin){
   const sc=t.stato==='Aperto'?'aperto':t.stato==='Chiuso'?'chiuso':'in-lavorazione';
   const pc='tag-'+t.priorita.toLowerCase();
+  const dataProp=t.dataPreferita?' · 📅 '+t.dataPreferita+(t.oraPreferita?' '+t.oraPreferita:''):'';
   let actions='';
   if(admin){
-    const btnConferma = t.stato!=='Chiuso' ? '<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="apriConferma(\'' + t.id + '\')">📅 Conferma</button>' : '';
-    const btnCarico   = t.stato!=='In lavorazione' ? '<button class="btn-sm success" onclick="setStato(\'' + t.id + '\',\'In lavorazione\')">Prendi in carico</button>' : '';
-    const btnChiudi   = t.stato!=='Chiuso' ? '<button class="btn-sm danger" onclick="setStato(\'' + t.id + '\',\'Chiuso\')">Chiudi</button>' : '';
-    const btnDettagli = '<button class="btn-sm" onclick="openModal(\'' + t.id + '\')">Dettagli</button>';
-    actions = '<div class="ticket-actions">' + btnConferma + btnCarico + btnChiudi + btnDettagli + '</div>';
+    let btns='';
+    if(t.stato!=='Chiuso') btns+='<button class="btn-sm accent" onclick="apriConferma(\''+t.id+'\')">📅 Conferma</button>';
+    if(t.stato!=='In lavorazione') btns+='<button class="btn-sm success" onclick="setStato(\''+t.id+'\',\'In lavorazione\')">Prendi in carico</button>';
+    if(t.stato!=='Chiuso') btns+='<button class="btn-sm danger" onclick="setStato(\''+t.id+'\',\'Chiuso\')">Chiudi</button>';
+    btns+='<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button>';
+    actions='<div class="ticket-actions">'+btns+'</div>';
   } else {
-    const btnChiudi   = t.stato!=='Chiuso' ? '<button class="btn-sm warning" onclick="apriChiudi(\'' + t.id + '\')">Chiudi ticket</button>' : '';
-    const btnDettagli = '<button class="btn-sm" onclick="openModal(\'' + t.id + '\')">Dettagli</button>';
-    actions = '<div class="ticket-actions">' + btnChiudi + btnDettagli + '</div>';
+    let btns='';
+    if(t.stato!=='Chiuso') btns+='<button class="btn-sm warning" onclick="apriChiudi(\''+t.id+'\')">Chiudi ticket</button>';
+    btns+='<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button>';
+    actions='<div class="ticket-actions">'+btns+'</div>';
   }
-  const dataProp = t.dataPreferita ? ' · 📅 ' + t.dataPreferita + (t.oraPreferita ? ' ' + t.oraPreferita : '') : '';
   return '<div class="ticket-card" id="card-'+t.id+'">'+
     '<div class="ticket-id">'+t.id+'</div>'+
     '<div><div class="ticket-title">'+escHtml(t.categoria)+'</div>'+
@@ -472,15 +495,45 @@ function ticketCard(t,admin){
     '<span class="tag '+pc+'">'+t.priorita+'</span>'+
     '<span class="tag tag-'+sc+'">'+t.stato+'</span></div></div>'+
     actions+'</div>';
+}
 
+// CONFERMA INTERVENTO
+function apriConferma(id){
+  const t=tickets.find(x=>x.id===id);
+  if(!t) return;
+  ticketDaConfermare=id;
+  const dataInput=document.getElementById('conferma-data');
+  const oraInput=document.getElementById('conferma-ora');
+  if(t.dataPreferita) dataInput.value=t.dataPreferita;
+  if(t.oraPreferita){ Array.from(oraInput.options).forEach(o=>{ if(o.value.startsWith(t.oraPreferita.split(':')[0])) oraInput.value=o.value; }); }
+  document.getElementById('conferma-note').value='';
+  document.getElementById('modal-conferma').classList.add('open');
+}
+function closeModalConferma(e){
+  if(!e||e.target===document.getElementById('modal-conferma')) document.getElementById('modal-conferma').classList.remove('open');
+}
+async function inviaConferma(){
+  const t=tickets.find(x=>x.id===ticketDaConfermare);
+  if(!t) return;
+  const data=document.getElementById('conferma-data').value;
+  const ora=document.getElementById('conferma-ora').value;
+  const note=document.getElementById('conferma-note').value.trim();
+  if(!data){ alert('Seleziona una data'); return; }
+  t.stato='In lavorazione'; t.dataConfermata=data; t.oraConfermata=ora; save();
+  document.getElementById('modal-conferma').classList.remove('open');
+  renderAdmin();
+  await inviaGAS({action:'conferma_intervento', id:t.id, nome:t.nome, email:t.email, sede:t.sede, categoria:t.categoria, priorita:t.priorita, dataConfermata:data, oraConfermata:ora, note});
+  showToast('ok','Intervento confermato per <strong>'+data+'</strong> ore <strong>'+ora+'</strong>. Email inviata a '+t.email);
+}
+
+// CHIUSURA UTENTE
 function apriChiudi(id){
   ticketDaChiudere=id;
   document.getElementById('chiudi-esito').value='';
   document.getElementById('modal-chiudi').classList.add('open');
 }
 function closeModalChiudi(e){
-  if(!e||e.target===document.getElementById('modal-chiudi'))
-    document.getElementById('modal-chiudi').classList.remove('open');
+  if(!e||e.target===document.getElementById('modal-chiudi')) document.getElementById('modal-chiudi').classList.remove('open');
 }
 async function confermaChiusura(){
   const t=tickets.find(x=>x.id===ticketDaChiudere);
@@ -492,6 +545,7 @@ async function confermaChiusura(){
   await inviaGAS({action:'chiudi_ticket', id:t.id, nome:t.nome, email:t.email, esito});
 }
 
+// MODAL DETTAGLIO
 function openModal(id){
   const t=tickets.find(x=>x.id===id);
   if(!t) return;
@@ -505,20 +559,21 @@ function openModal(id){
     '<div class="modal-row"><label>Ruolo</label><p>'+escHtml(t.ruolo)+'</p></div>'+
     '<div class="modal-row"><label>Sede</label><p>'+escHtml(t.sede)+'</p></div>'+
     '<div class="modal-row"><label>Priorità</label><p>'+t.priorita+'</p></div>'+
+    (t.dataPreferita?'<div class="modal-row"><label>Data preferita</label><p>'+t.dataPreferita+(t.oraPreferita?' — '+t.oraPreferita:'')+'</p></div>':'')+
+    (t.dataConfermata?'<div class="modal-row"><label>Data confermata</label><p><strong>'+t.dataConfermata+(t.oraConfermata?' — '+t.oraConfermata:'')+'</strong></p></div>':'')+
     '<div class="modal-row"><label>Descrizione</label><p style="white-space:pre-wrap">'+escHtml(t.descrizione)+'</p></div>'+
     (t.note?'<div class="modal-row"><label>Note</label><p style="white-space:pre-wrap">'+escHtml(t.note)+'</p></div>':'')+
     '<hr class="modal-divider">'+
     (isAdmin?
       '<div class="modal-row"><label>Stato</label>'+
-      '<select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;background:var(--surface);color:var(--text)" id="modal-stato" onchange="setStato(\''+t.id+'\',this.value)">'+statoOpts+'</select></div>'+
+      '<select style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;background:var(--surface);color:var(--text)" onchange="setStato(\''+t.id+'\',this.value)">'+statoOpts+'</select></div>'+
       '<div class="modal-row"><label>Note tecniche</label>'+
       '<textarea class="note-input" id="modal-note">'+escHtml(t.note||'')+'</textarea>'+
       '<button class="btn-sm success" style="margin-top:6px" onclick="saveNote(\''+t.id+'\')">Salva nota</button></div>':'');
   document.getElementById('modal-overlay').classList.add('open');
 }
 function closeModal(e){
-  if(!e||e.target===document.getElementById('modal-overlay'))
-    document.getElementById('modal-overlay').classList.remove('open');
+  if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open');
 }
 function setStato(id,stato){
   const t=tickets.find(x=>x.id===id);
@@ -533,16 +588,11 @@ function saveNote(id){
   }
 }
 function clearClosed(){ tickets=tickets.filter(t=>t.stato!=='Chiuso'); save(); renderAdmin(); }
-function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// Imposta data minima a domani
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-const dd = String(tomorrow.getDate()).padStart(2,'0');
-const mm = String(tomorrow.getMonth()+1).padStart(2,'0');
-const yyyy = tomorrow.getFullYear();
-const dateEl = document.getElementById('f-data');
-if (dateEl) dateEl.min = yyyy + '-' + mm + '-' + dd;
+// INIT
+const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+const dd=String(tomorrow.getDate()).padStart(2,'0'), mm=String(tomorrow.getMonth()+1).padStart(2,'0'), yyyy=tomorrow.getFullYear();
+document.getElementById('f-data').min=yyyy+'-'+mm+'-'+dd;
 
 load(); updateBadge();
 </script>
