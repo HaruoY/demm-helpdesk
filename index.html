@@ -458,6 +458,58 @@ function ticketCard(t,admin){
     '<span class="tag tag-'+sc+'">'+t.stato+'</span></div></div>'+actions+'</div>';
 }
 
+// ── CONFERMA INTERVENTO ──────────────────────────────────────────────────
+let ticketDaConfermare = null;
+
+function apriConferma(id) {
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+  ticketDaConfermare = id;
+  // Pre-compila con la data proposta dal richiedente
+  const dataInput = document.getElementById('conferma-data');
+  const oraInput = document.getElementById('conferma-ora');
+  if (t.dataPreferita) dataInput.value = t.dataPreferita;
+  if (t.oraPreferita) {
+    Array.from(oraInput.options).forEach(o => {
+      if (o.value.startsWith(t.oraPreferita.split(':')[0])) oraInput.value = o.value;
+    });
+  }
+  document.getElementById('conferma-note').value = '';
+  document.getElementById('modal-conferma').classList.add('open');
+}
+
+function closeModalConferma(e) {
+  if (!e || e.target === document.getElementById('modal-conferma'))
+    document.getElementById('modal-conferma').classList.remove('open');
+}
+
+async function inviaConferma() {
+  const t = tickets.find(x => x.id === ticketDaConfermare);
+  if (!t) return;
+  const data = document.getElementById('conferma-data').value;
+  const ora  = document.getElementById('conferma-ora').value;
+  const note = document.getElementById('conferma-note').value.trim();
+
+  if (!data) { alert('Seleziona una data'); return; }
+
+  t.stato = 'In lavorazione';
+  t.dataConfermata = data;
+  t.oraConfermata  = ora;
+  save();
+
+  document.getElementById('modal-conferma').classList.remove('open');
+  renderAdmin();
+
+  await inviaGAS({
+    action: 'conferma_intervento',
+    id: t.id, nome: t.nome, email: t.email,
+    sede: t.sede, categoria: t.categoria, priorita: t.priorita,
+    dataConfermata: data, oraConfermata: ora, note
+  });
+
+  showToast('ok', 'Intervento confermato per <strong>' + data + '</strong> ore <strong>' + ora + '</strong>. Email inviata a ' + t.email);
+}
+
 function apriChiudi(id){
   ticketDaChiudere=id;
   document.getElementById('chiudi-esito').value='';
