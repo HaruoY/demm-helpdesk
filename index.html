@@ -453,76 +453,25 @@ function ticketCard(t,admin){
   const pc='tag-'+t.priorita.toLowerCase();
   let actions='';
   if(admin){
-    actions='<div class="ticket-actions">'+
-      (t.stato!=='Chiuso'?'<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="apriConferma(''+t.id+'')">📅 Conferma</button>':'')+
-      (t.stato!=='In lavorazione'?'<button class="btn-sm success" onclick="setStato(\''+t.id+'\',\'In lavorazione\')">Prendi in carico</button>':'')+
-      (t.stato!=='Chiuso'?'<button class="btn-sm danger" onclick="setStato(\''+t.id+'\',\'Chiuso\')">Chiudi</button>':'')+
-      '<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button></div>';
+    const btnConferma = t.stato!=='Chiuso' ? '<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="apriConferma(\'' + t.id + '\')">📅 Conferma</button>' : '';
+    const btnCarico   = t.stato!=='In lavorazione' ? '<button class="btn-sm success" onclick="setStato(\'' + t.id + '\',\'In lavorazione\')">Prendi in carico</button>' : '';
+    const btnChiudi   = t.stato!=='Chiuso' ? '<button class="btn-sm danger" onclick="setStato(\'' + t.id + '\',\'Chiuso\')">Chiudi</button>' : '';
+    const btnDettagli = '<button class="btn-sm" onclick="openModal(\'' + t.id + '\')">Dettagli</button>';
+    actions = '<div class="ticket-actions">' + btnConferma + btnCarico + btnChiudi + btnDettagli + '</div>';
   } else {
-    actions='<div class="ticket-actions">'+
-      (t.stato!=='Chiuso'?'<button class="btn-sm warning" onclick="apriChiudi(\''+t.id+'\')">Chiudi ticket</button>':'')+
-      '<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button></div>';
+    const btnChiudi   = t.stato!=='Chiuso' ? '<button class="btn-sm warning" onclick="apriChiudi(\'' + t.id + '\')">Chiudi ticket</button>' : '';
+    const btnDettagli = '<button class="btn-sm" onclick="openModal(\'' + t.id + '\')">Dettagli</button>';
+    actions = '<div class="ticket-actions">' + btnChiudi + btnDettagli + '</div>';
   }
+  const dataProp = t.dataPreferita ? ' · 📅 ' + t.dataPreferita + (t.oraPreferita ? ' ' + t.oraPreferita : '') : '';
   return '<div class="ticket-card" id="card-'+t.id+'">'+
     '<div class="ticket-id">'+t.id+'</div>'+
     '<div><div class="ticket-title">'+escHtml(t.categoria)+'</div>'+
-    '<div class="ticket-meta">'+escHtml(t.nome)+' · '+escHtml(t.sede)+' · '+fmtDate(t.createdAt)+'</div>'+
+    '<div class="ticket-meta">'+escHtml(t.nome)+' · '+escHtml(t.sede)+' · '+fmtDate(t.createdAt)+dataProp+'</div>'+
     '<div class="ticket-tags"><span class="tag tag-cat">'+escHtml(t.categoria)+'</span>'+
     '<span class="tag '+pc+'">'+t.priorita+'</span>'+
-    '<span class="tag tag-'+sc+'">'+t.stato+'</span></div></div>'+actions+'</div>';
-}
-
-// ── CONFERMA INTERVENTO ──────────────────────────────────────────────────
-let ticketDaConfermare = null;
-
-function apriConferma(id) {
-  const t = tickets.find(x => x.id === id);
-  if (!t) return;
-  ticketDaConfermare = id;
-  // Pre-compila con la data proposta dal richiedente
-  const dataInput = document.getElementById('conferma-data');
-  const oraInput = document.getElementById('conferma-ora');
-  if (t.dataPreferita) dataInput.value = t.dataPreferita;
-  if (t.oraPreferita) {
-    Array.from(oraInput.options).forEach(o => {
-      if (o.value.startsWith(t.oraPreferita.split(':')[0])) oraInput.value = o.value;
-    });
-  }
-  document.getElementById('conferma-note').value = '';
-  document.getElementById('modal-conferma').classList.add('open');
-}
-
-function closeModalConferma(e) {
-  if (!e || e.target === document.getElementById('modal-conferma'))
-    document.getElementById('modal-conferma').classList.remove('open');
-}
-
-async function inviaConferma() {
-  const t = tickets.find(x => x.id === ticketDaConfermare);
-  if (!t) return;
-  const data = document.getElementById('conferma-data').value;
-  const ora  = document.getElementById('conferma-ora').value;
-  const note = document.getElementById('conferma-note').value.trim();
-
-  if (!data) { alert('Seleziona una data'); return; }
-
-  t.stato = 'In lavorazione';
-  t.dataConfermata = data;
-  t.oraConfermata  = ora;
-  save();
-
-  document.getElementById('modal-conferma').classList.remove('open');
-  renderAdmin();
-
-  await inviaGAS({
-    action: 'conferma_intervento',
-    id: t.id, nome: t.nome, email: t.email,
-    sede: t.sede, categoria: t.categoria, priorita: t.priorita,
-    dataConfermata: data, oraConfermata: ora, note
-  });
-
-  showToast('ok', 'Intervento confermato per <strong>' + data + '</strong> ore <strong>' + ora + '</strong>. Email inviata a ' + t.email);
-}
+    '<span class="tag tag-'+sc+'">'+t.stato+'</span></div></div>'+
+    actions+'</div>';
 
 function apriChiudi(id){
   ticketDaChiudere=id;
