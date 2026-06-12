@@ -316,10 +316,23 @@ let adminClicks=0;
 function toggleAdmin(){
   adminClicks++;
   if(adminClicks>=3){
-    isAdmin=!isAdmin; adminClicks=0;
-    document.getElementById('admin-nav-btn').style.display=isAdmin?'':'none';
-    document.getElementById('admin-toggle').style.color=isAdmin?'rgba(255,255,255,0.7)':'rgba(255,255,255,0.2)';
-    if(isAdmin) showView('admin');
+    adminClicks=0;
+    if(isAdmin){
+      isAdmin=false;
+      document.getElementById('admin-nav-btn').style.display='none';
+      document.getElementById('admin-toggle').style.color='rgba(255,255,255,0.2)';
+      showView('nuovo');
+    } else {
+      const pwd = prompt('Password amministratore:');
+      if(pwd === 'Bacon_2017'){
+        isAdmin=true;
+        document.getElementById('admin-nav-btn').style.display='';
+        document.getElementById('admin-toggle').style.color='rgba(255,255,255,0.7)';
+        showView('admin');
+      } else if(pwd !== null){
+        alert('Password errata.');
+      }
+    }
   }
 }
 
@@ -331,7 +344,7 @@ async function submitTicket(e){
 
   // Validazione email
   const email=document.getElementById('f-email').value.trim();
-  if(!email.endsWith('@unisannio.it')){
+  if(!email.endsWith('@unisannio.it') && !email.endsWith('@studenti.unisannio.it')){
     showToast('err','Inserisci un indirizzo email istituzionale <strong>@unisannio.it</strong>.');
     return;
   }
