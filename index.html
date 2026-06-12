@@ -141,6 +141,23 @@
       <div class="field"><label>Categoria intervento</label><select id="f-categoria" required><option value="">Seleziona…</option><option>PC / Postazione di lavoro</option><option>Stampante / Periferica</option><option>Rete / Wi-Fi</option><option>Proiettore / Aula multimediale</option><option>Moodle / Piattaforma e-learning</option><option>Google Workspace / Email</option><option>Firma digitale / SPID</option><option>Software / Licenze</option><option>Meet / Videoconferenza</option><option>Altro</option></select></div>
       <div class="field"><label>Priorità</label><div class="priority-group"><div class="priority-option"><input type="radio" name="priorita" id="p-bassa" value="Bassa" checked><label for="p-bassa" class="p-bassa">🟢 Bassa</label></div><div class="priority-option"><input type="radio" name="priorita" id="p-media" value="Media"><label for="p-media" class="p-media">🟡 Media</label></div><div class="priority-option"><input type="radio" name="priorita" id="p-alta" value="Alta"><label for="p-alta" class="p-alta">🔴 Alta</label></div></div></div>
       <div class="field form-full"><label>Descrizione del problema</label><textarea id="f-descrizione" placeholder="Descrivi il problema nel dettaglio…" required></textarea></div>
+      <div class="field form-full">
+        <label>Data e ora preferita per l'intervento</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <input type="date" id="f-data" min="" required>
+          <select id="f-ora" required>
+            <option value="">Seleziona orario…</option>
+            <option>08:30 - 09:30</option>
+            <option>09:30 - 10:30</option>
+            <option>10:30 - 11:30</option>
+            <option>11:30 - 12:30</option>
+            <option>14:00 - 15:00</option>
+            <option>15:00 - 16:00</option>
+            <option>16:00 - 17:00</option>
+          </select>
+        </div>
+        <span style="font-size:12px;color:var(--muted);margin-top:4px">La data è indicativa — il tecnico confermerà o proporrà un orario alternativo</span>
+      </div>
       <!-- Honeypot anti-bot -->
       <div style="display:none"><input type="text" id="f-trap" tabindex="-1" autocomplete="off"></div>
       <div class="field form-full" style="flex-direction:row;align-items:center;gap:10px">
@@ -502,6 +519,15 @@ function saveNote(id){
 }
 function clearClosed(){ tickets=tickets.filter(t=>t.stato!=='Chiuso'); save(); renderAdmin(); }
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Imposta data minima a domani
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const dd = String(tomorrow.getDate()).padStart(2,'0');
+const mm = String(tomorrow.getMonth()+1).padStart(2,'0');
+const yyyy = tomorrow.getFullYear();
+const dateEl = document.getElementById('f-data');
+if (dateEl) dateEl.min = yyyy + '-' + mm + '-' + dd;
 
 load(); updateBadge();
 </script>
