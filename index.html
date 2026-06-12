@@ -454,6 +454,7 @@ function ticketCard(t,admin){
   let actions='';
   if(admin){
     actions='<div class="ticket-actions">'+
+      (t.stato!=='Chiuso'?'<button class="btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="apriConferma(''+t.id+'')">📅 Conferma</button>':'')+
       (t.stato!=='In lavorazione'?'<button class="btn-sm success" onclick="setStato(\''+t.id+'\',\'In lavorazione\')">Prendi in carico</button>':'')+
       (t.stato!=='Chiuso'?'<button class="btn-sm danger" onclick="setStato(\''+t.id+'\',\'Chiuso\')">Chiudi</button>':'')+
       '<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button></div>';
