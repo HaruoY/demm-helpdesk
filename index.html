@@ -83,6 +83,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .empty{text-align:center;padding:48px 20px;color:var(--muted);}
 .empty-icon{font-size:32px;margin-bottom:10px;}
 .empty h3{font-size:15px;font-weight:500;margin-bottom:4px;color:var(--text);}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border-radius:14px;padding:28px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;animation:modalIn .2s ease;}
@@ -129,41 +130,31 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   <form id="ticket-form" onsubmit="submitTicket(event)">
     <div class="form-grid">
       <div class="field"><label>Nome e cognome</label><input type="text" id="f-nome" placeholder="Es. Mario Rossi" required></div>
-      <div class="field"><label>Email istituzionale</label><input type="email" id="f-email" placeholder="nome@unisannio.it o nome@studenti.unisannio.it" required></div>
+      <div class="field"><label>Email istituzionale</label><input type="email" id="f-email" placeholder="nome@unisannio.it" required></div>
       <div class="field">
         <label>Ruolo</label>
         <select id="f-ruolo" required>
           <option value="">Seleziona…</option>
-          <option>Docente</option>
-          <option>Ricercatore / RTD</option>
-          <option>Personale TAB</option>
-          <option>Dottorando</option>
-          <option>Assegnista</option>
+          <option>Docente</option><option>Ricercatore / RTD</option>
+          <option>Personale TAB</option><option>Dottorando</option><option>Assegnista</option>
         </select>
       </div>
       <div class="field">
         <label>Sede</label>
         <select id="f-sede" required>
           <option value="">Seleziona…</option>
-          <option>Via delle Puglie</option>
-          <option>Palazzo De Simone</option>
-          <option>Da remoto</option>
+          <option>Via delle Puglie</option><option>Palazzo De Simone</option><option>Da remoto</option>
         </select>
       </div>
       <div class="field">
         <label>Categoria intervento</label>
         <select id="f-categoria" required>
           <option value="">Seleziona…</option>
-          <option>PC / Postazione di lavoro</option>
-          <option>Stampante / Periferica</option>
-          <option>Rete / Wi-Fi</option>
-          <option>Proiettore / Aula multimediale</option>
-          <option>Moodle / Piattaforma e-learning</option>
-          <option>Google Workspace / Email</option>
-          <option>Firma digitale / SPID</option>
-          <option>Software / Licenze</option>
-          <option>Meet / Videoconferenza</option>
-          <option>Altro</option>
+          <option>PC / Postazione di lavoro</option><option>Stampante / Periferica</option>
+          <option>Rete / Wi-Fi</option><option>Proiettore / Aula multimediale</option>
+          <option>Moodle / Piattaforma e-learning</option><option>Google Workspace / Email</option>
+          <option>Firma digitale / SPID</option><option>Software / Licenze</option>
+          <option>Meet / Videoconferenza</option><option>Altro</option>
         </select>
       </div>
       <div class="field">
@@ -181,18 +172,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
           <input type="date" id="f-data" required>
           <select id="f-ora" required>
             <option value="">Seleziona orario…</option>
-            <option>08:30 - 09:30</option>
-            <option>09:30 - 10:30</option>
-            <option>10:30 - 11:30</option>
-            <option>11:30 - 12:30</option>
-            <option>14:00 - 15:00</option>
-            <option>15:00 - 16:00</option>
-            <option>16:00 - 17:00</option>
+            <option>08:30 - 09:30</option><option>09:30 - 10:30</option>
+            <option>10:30 - 11:30</option><option>11:30 - 12:30</option>
+            <option>14:00 - 15:00</option><option>15:00 - 16:00</option><option>16:00 - 17:00</option>
           </select>
         </div>
         <span style="font-size:12px;color:var(--muted);margin-top:4px;display:block">La data è indicativa — il tecnico confermerà o proporrà un orario alternativo</span>
       </div>
-      <!-- Honeypot anti-bot -->
       <div style="display:none"><input type="text" id="f-trap" tabindex="-1" autocomplete="off"></div>
       <div class="field form-full" style="flex-direction:row;align-items:center;gap:10px">
         <button type="submit" class="btn-primary" id="submit-btn">Invia richiesta</button>
@@ -204,12 +190,18 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 
 <!-- STORICO -->
 <div class="view" id="view-storico">
-  <div class="page-header"><h1>I miei ticket</h1><p>Storico delle tue richieste di assistenza</p></div>
-  <div class="filters">
-    <button class="filter-btn active" onclick="filterStorico('tutti',this)">Tutti</button>
-    <button class="filter-btn" onclick="filterStorico('Aperto',this)">Aperti</button>
-    <button class="filter-btn" onclick="filterStorico('In lavorazione',this)">In lavorazione</button>
-    <button class="filter-btn" onclick="filterStorico('Chiuso',this)">Chiusi</button>
+  <div class="page-header">
+    <h1>I miei ticket</h1>
+    <p>Storico delle tue richieste di assistenza</p>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:18px;align-items:center;flex-wrap:wrap">
+    <div class="filters" style="margin-bottom:0">
+      <button class="filter-btn active" onclick="filterStorico('tutti',this)">Tutti</button>
+      <button class="filter-btn" onclick="filterStorico('Aperto',this)">Aperti</button>
+      <button class="filter-btn" onclick="filterStorico('In lavorazione',this)">In lavorazione</button>
+      <button class="filter-btn" onclick="filterStorico('Chiuso',this)">Chiusi</button>
+    </div>
+    <button class="btn-sm" onclick="reloadStorico()" style="margin-left:auto">↻ Aggiorna</button>
   </div>
   <div class="ticket-list" id="storico-list"></div>
 </div>
@@ -218,7 +210,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 <div class="view" id="view-admin">
   <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end">
     <div><h1>Pannello admin</h1><p>Francesco Moleti — Tecnico informatico DEMM</p></div>
-    <button class="btn-sm danger" onclick="if(confirm('Eliminare tutti i ticket chiusi?')){clearClosed()}">Elimina chiusi</button>
+    <button class="btn-sm" onclick="reloadAdmin()" style="margin-right:8px">↻ Aggiorna</button>
   </div>
   <div class="stats-row" id="stats-row"></div>
   <div class="filters">
@@ -230,7 +222,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   <div class="ticket-list" id="admin-list"></div>
 </div>
 
-<!-- MODAL CONFERMA INTERVENTO -->
+<!-- MODAL CONFERMA -->
 <div class="modal-overlay" id="modal-conferma" onclick="closeModalConferma(event)">
   <div class="modal">
     <div class="modal-header">
@@ -238,26 +230,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       <button class="modal-close" onclick="closeModalConferma()">✕</button>
     </div>
     <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Conferma o modifica la data proposta. Verrà inviata una email di conferma al richiedente.</p>
-    <div class="modal-row">
-      <label>Data intervento</label>
-      <input type="date" id="conferma-data" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;width:100%;outline:none;">
-    </div>
+    <div class="modal-row"><label>Data intervento</label><input type="date" id="conferma-data" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;width:100%;outline:none;"></div>
     <div class="modal-row" style="margin-top:12px">
       <label>Orario</label>
       <select id="conferma-ora" style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:14px;width:100%;outline:none;appearance:none;background:white;">
-        <option>08:30 - 09:30</option>
-        <option>09:30 - 10:30</option>
-        <option>10:30 - 11:30</option>
-        <option>11:30 - 12:30</option>
-        <option>14:00 - 15:00</option>
-        <option>15:00 - 16:00</option>
-        <option>16:00 - 17:00</option>
+        <option>08:30 - 09:30</option><option>09:30 - 10:30</option>
+        <option>10:30 - 11:30</option><option>11:30 - 12:30</option>
+        <option>14:00 - 15:00</option><option>15:00 - 16:00</option><option>16:00 - 17:00</option>
       </select>
     </div>
-    <div class="modal-row" style="margin-top:12px">
-      <label>Note per il richiedente (opzionale)</label>
-      <textarea class="note-input" id="conferma-note" placeholder="Es. Ci vediamo in ufficio, porta il PC…"></textarea>
-    </div>
+    <div class="modal-row" style="margin-top:12px"><label>Note (opzionale)</label><textarea class="note-input" id="conferma-note" placeholder="Es. Ci vediamo in ufficio, porta il PC…"></textarea></div>
     <div style="display:flex;gap:8px;margin-top:16px">
       <button class="btn-primary" onclick="inviaConferma()" style="padding:10px 20px">Conferma e invia email</button>
       <button class="btn-sm" onclick="closeModalConferma()">Annulla</button>
@@ -265,7 +247,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   </div>
 </div>
 
-<!-- MODAL CHIUSURA UTENTE -->
+<!-- MODAL CHIUSURA -->
 <div class="modal-overlay" id="modal-chiudi" onclick="closeModalChiudi(event)">
   <div class="modal">
     <div class="modal-header">
@@ -273,10 +255,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
       <button class="modal-close" onclick="closeModalChiudi()">✕</button>
     </div>
     <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Descrivi brevemente come è stato risolto il problema.</p>
-    <div class="modal-row">
-      <label>Esito / Note di chiusura</label>
-      <textarea class="note-input" id="chiudi-esito" placeholder="Es. Problema risolto, PC funzionante."></textarea>
-    </div>
+    <div class="modal-row"><label>Esito / Note di chiusura</label><textarea class="note-input" id="chiudi-esito" placeholder="Es. Problema risolto, PC funzionante."></textarea></div>
     <div style="display:flex;gap:8px;margin-top:12px">
       <button class="btn-primary" onclick="confermaChiusura()" style="padding:10px 20px">Conferma chiusura</button>
       <button class="btn-sm" onclick="closeModalChiudi()">Annulla</button>
@@ -290,32 +269,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6uc3n-ifFWOhcuVnGujxBejlmN6Hb1At_Y_jKs11-eDXabD7ZtSqV-MB3Z5v8gG5iVA/exec';
-const STORAGE_KEY = 'demm_tickets_v3';
-const ADMIN_PWD = 'Bacon_2017';
+const GAS_URL    = 'https://script.google.com/macros/s/AKfycbw6uc3n-ifFWOhcuVnGujxBejlmN6Hb1At_Y_jKs11-eDXabD7ZtSqV-MB3Z5v8gG5iVA/exec';
+const ADMIN_PWD  = 'Bacon_2017';
 
-let tickets = [];
-let isAdmin = false;
-let currentFilter = {storico:'tutti', admin:'tutti'};
+let allTickets   = [];
+let isAdmin      = false;
+let currentFilter = { storico:'tutti', admin:'tutti' };
 let currentEmail = '';
-let ticketDaChiudere = null;
+let ticketDaChiudere   = null;
 let ticketDaConfermare = null;
 
-function load(){ try{ tickets=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ tickets=[]; } }
-function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets)); }
-
-function genId(){
-  const n=(tickets.length+1).toString().padStart(4,'0');
-  const d=new Date();
-  return 'TK-'+d.getFullYear().toString().slice(-2)+(d.getMonth()+1).toString().padStart(2,'0')+'-'+n;
-}
-function fmtDate(iso){
-  const d=new Date(iso);
-  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-}
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// Rate limiting
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d)) return String(iso);
+  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+}
+
+function genId(){
+  const d=new Date();
+  const n = String(Date.now()).slice(-4);
+  return 'TK-'+d.getFullYear().toString().slice(-2)+(d.getMonth()+1).toString().padStart(2,'0')+'-'+n;
+}
+
+// ── Rate limiting ─────────────────────────────────────────────────────────────
 function checkRateLimit(){
   const key='demm_rl', now=Date.now(), win=3600000, max=3;
   let d=JSON.parse(localStorage.getItem(key)||'{"count":0,"start":0}');
@@ -325,11 +304,11 @@ function checkRateLimit(){
   return {ok:true};
 }
 
-// JSONP
+// ── JSONP ─────────────────────────────────────────────────────────────────────
 function jsonpCall(params){
   return new Promise((resolve,reject)=>{
     const cbName='cb_'+Date.now(); let settled=false;
-    const timeout=setTimeout(()=>{ if(settled)return; settled=true; delete window[cbName]; if(scriptEl)scriptEl.remove(); reject(new Error('timeout')); },8000);
+    const timeout=setTimeout(()=>{ if(settled)return; settled=true; delete window[cbName]; if(scriptEl)scriptEl.remove(); reject(new Error('timeout')); },10000);
     window[cbName]=(data)=>{ if(settled)return; settled=true; clearTimeout(timeout); delete window[cbName]; if(scriptEl)scriptEl.remove(); resolve(data); };
     params.callback=cbName;
     const qs=new URLSearchParams(params).toString();
@@ -341,18 +320,18 @@ function jsonpCall(params){
 }
 
 async function inviaGAS(params){
-  try{ return await jsonpCall(params); }catch(e){ return {ok:false}; }
+  try{ return await jsonpCall(params); }catch(e){ console.warn('GAS error:',e); return {ok:false}; }
 }
 
-// NAV
+// ── NAV ───────────────────────────────────────────────────────────────────────
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   const btns={nuovo:0,storico:1,admin:2};
   document.querySelectorAll('.nav-btn')[btns[name]]?.classList.add('active');
-  if(name==='storico') renderStorico();
-  if(name==='admin') renderAdmin();
+  if(name==='storico') loadStorico();
+  if(name==='admin') loadAdmin();
 }
 
 let adminClicks=0;
@@ -377,7 +356,7 @@ function toggleAdmin(){
   }
 }
 
-// SUBMIT
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
 async function submitTicket(e){
   e.preventDefault();
   if(document.getElementById('f-trap').value!=='') return;
@@ -392,23 +371,26 @@ async function submitTicket(e){
   btn.textContent='Invio in corso…'; btn.disabled=true;
   const priorita=document.querySelector('input[name="priorita"]:checked')?.value||'Bassa';
   const ticket={
-    id:genId(), createdAt:new Date().toISOString(),
+    id:genId(),
     nome:document.getElementById('f-nome').value.trim(),
-    email, ruolo:document.getElementById('f-ruolo').value,
+    email,
+    ruolo:document.getElementById('f-ruolo').value,
     sede:document.getElementById('f-sede').value,
     categoria:document.getElementById('f-categoria').value,
-    priorita, descrizione:document.getElementById('f-descrizione').value.trim(),
+    priorita,
+    descrizione:document.getElementById('f-descrizione').value.trim(),
     dataPreferita:document.getElementById('f-data').value,
     oraPreferita:document.getElementById('f-ora').value,
-    stato:'Aperto', note:''
   };
-  tickets.unshift(ticket); save(); currentEmail=ticket.email;
-  await inviaGAS({action:'nuovo_ticket', id:ticket.id, nome:ticket.nome, email:ticket.email, ruolo:ticket.ruolo, sede:ticket.sede, categoria:ticket.categoria, priorita:ticket.priorita, descrizione:ticket.descrizione, dataPreferita:ticket.dataPreferita, oraPreferita:ticket.oraPreferita});
+  const res = await inviaGAS({action:'nuovo_ticket', ...ticket});
   btn.textContent='Invia richiesta'; btn.disabled=false;
-  document.getElementById('ticket-form').reset();
-  document.getElementById('p-bassa').checked=true;
-  showToast('ok','Ticket <strong>'+ticket.id+'</strong> inviato. Riceverai conferma a <em>'+ticket.email+'</em>.');
-  updateBadge();
+  if(res && res.ok !== false){
+    document.getElementById('ticket-form').reset();
+    document.getElementById('p-bassa').checked=true;
+    showToast('ok','Ticket <strong>'+ticket.id+'</strong> inviato. Riceverai conferma a <em>'+ticket.email+'</em>.');
+  } else {
+    showToast('err','Errore nell\'invio. Riprova o contatta il tecnico direttamente.');
+  }
 }
 
 function showToast(type,msg){
@@ -418,149 +400,166 @@ function showToast(type,msg){
   setTimeout(()=>t.classList.remove('show'),7000);
 }
 
-// STORICO
+// ── STORICO ───────────────────────────────────────────────────────────────────
 function filterStorico(f,btn){
   currentFilter.storico=f;
   document.querySelectorAll('#view-storico .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); renderStorico();
+  btn.classList.add('active');
+  renderStorico();
+}
+
+async function loadStorico(){
+  if(!currentEmail){ const em=prompt('Inserisci la tua email istituzionale:'); if(em) currentEmail=em.trim(); else return; }
+  document.getElementById('storico-list').innerHTML='<div class="loading">Caricamento in corso…</div>';
+  const res = await inviaGAS({ action:'get_tickets', email:currentEmail });
+  if(res && res.ok && res.tickets){
+    allTickets = res.tickets;
+  }
+  renderStorico();
+}
+
+function reloadStorico(){
+  currentEmail='';
+  loadStorico();
 }
 
 function renderStorico(){
   const list=document.getElementById('storico-list');
-  if(!currentEmail){ const em=prompt('Inserisci la tua email istituzionale:'); if(em) currentEmail=em.trim(); else return; }
-  let mine=tickets.filter(t=>t.email.toLowerCase()===currentEmail.toLowerCase());
+  let mine=allTickets.filter(t=>t.email && t.email.toLowerCase()===currentEmail.toLowerCase());
   if(currentFilter.storico!=='tutti') mine=mine.filter(t=>t.stato===currentFilter.storico);
   if(!mine.length){ list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><h3>Nessun ticket trovato</h3><p>Non hai ancora inviato richieste</p></div>'; return; }
   list.innerHTML=mine.map(t=>ticketCard(t,false)).join('');
 }
 
-// ADMIN
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
 function filterAdmin(f,btn){
   currentFilter.admin=f;
   document.querySelectorAll('#view-admin .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); renderAdmin();
+  btn.classList.add('active');
+  renderAdmin();
 }
+
+async function loadAdmin(){
+  document.getElementById('admin-list').innerHTML='<div class="loading">Caricamento in corso…</div>';
+  const res = await inviaGAS({ action:'get_tickets' });
+  if(res && res.ok && res.tickets){
+    allTickets = res.tickets;
+  }
+  renderAdmin();
+  updateBadge();
+}
+
+function reloadAdmin(){ loadAdmin(); }
 
 function renderAdmin(){
   renderStats();
   const list=document.getElementById('admin-list');
-  let data=[...tickets];
+  let data=[...allTickets];
   if(currentFilter.admin!=='tutti') data=data.filter(t=>t.stato===currentFilter.admin);
   if(!data.length){ list.innerHTML='<div class="empty"><div class="empty-icon">🎉</div><h3>Tutto a posto</h3><p>Nessun ticket in questa categoria</p></div>'; return; }
   list.innerHTML=data.map(t=>ticketCard(t,true)).join('');
-  updateBadge();
 }
 
 function renderStats(){
-  const ap=tickets.filter(t=>t.stato==='Aperto').length;
-  const lav=tickets.filter(t=>t.stato==='In lavorazione').length;
-  const ch=tickets.filter(t=>t.stato==='Chiuso').length;
+  const ap=allTickets.filter(t=>t.stato==='Aperto').length;
+  const lav=allTickets.filter(t=>t.stato==='In lavorazione').length;
+  const ch=allTickets.filter(t=>t.stato==='Chiuso').length;
   document.getElementById('stats-row').innerHTML=
-    '<div class="stat-card"><div class="stat-num" style="color:var(--accent)">'+tickets.length+'</div><div class="stat-label">Totale</div></div>'+
+    '<div class="stat-card"><div class="stat-num" style="color:var(--accent)">'+allTickets.length+'</div><div class="stat-label">Totale</div></div>'+
     '<div class="stat-card"><div class="stat-num" style="color:var(--accent)">'+ap+'</div><div class="stat-label">Aperti</div></div>'+
     '<div class="stat-card"><div class="stat-num" style="color:var(--teal)">'+lav+'</div><div class="stat-label">In lavorazione</div></div>'+
     '<div class="stat-card"><div class="stat-num" style="color:var(--muted)">'+ch+'</div><div class="stat-label">Chiusi</div></div>';
 }
 
 function updateBadge(){
-  const open=tickets.filter(t=>t.stato==='Aperto').length;
+  const open=allTickets.filter(t=>t.stato==='Aperto').length;
   const badge=document.getElementById('open-badge');
   badge.style.display=open>0?'':'none'; badge.textContent=open;
 }
 
-// TICKET CARD
+// ── TICKET CARD ───────────────────────────────────────────────────────────────
 function ticketCard(t,admin){
   const sc=t.stato==='Aperto'?'aperto':t.stato==='Chiuso'?'chiuso':'in-lavorazione';
-  const pc='tag-'+t.priorita.toLowerCase();
+  const pc='tag-'+(t.priorita||'bassa').toLowerCase();
   const dataProp=t.dataPreferita?' · 📅 '+t.dataPreferita+(t.oraPreferita?' '+t.oraPreferita:''):'';
-  let actions='';
+  const dataConf=t.dataConfermata?'<span style="color:var(--teal);margin-left:6px">✓ '+t.dataConfermata+'</span>':'';
+  let btns='';
   if(admin){
-    let btns='';
     if(t.stato!=='Chiuso') btns+='<button class="btn-sm accent" onclick="apriConferma(\''+t.id+'\')">📅 Conferma</button>';
     if(t.stato!=='In lavorazione') btns+='<button class="btn-sm success" onclick="setStato(\''+t.id+'\',\'In lavorazione\')">Prendi in carico</button>';
     if(t.stato!=='Chiuso') btns+='<button class="btn-sm danger" onclick="setStato(\''+t.id+'\',\'Chiuso\')">Chiudi</button>';
     btns+='<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button>';
-    actions='<div class="ticket-actions">'+btns+'</div>';
   } else {
-    let btns='';
     if(t.stato!=='Chiuso') btns+='<button class="btn-sm warning" onclick="apriChiudi(\''+t.id+'\')">Chiudi ticket</button>';
     btns+='<button class="btn-sm" onclick="openModal(\''+t.id+'\')">Dettagli</button>';
-    actions='<div class="ticket-actions">'+btns+'</div>';
   }
   return '<div class="ticket-card" id="card-'+t.id+'">'+
-    '<div class="ticket-id">'+t.id+'</div>'+
+    '<div class="ticket-id">'+escHtml(t.id)+'</div>'+
     '<div><div class="ticket-title">'+escHtml(t.categoria)+'</div>'+
-    '<div class="ticket-meta">'+escHtml(t.nome)+' · '+escHtml(t.sede)+' · '+fmtDate(t.createdAt)+dataProp+'</div>'+
+    '<div class="ticket-meta">'+escHtml(t.nome)+' · '+escHtml(t.sede)+' · '+fmtDate(t.createdAt)+dataProp+dataConf+'</div>'+
     '<div class="ticket-tags"><span class="tag tag-cat">'+escHtml(t.categoria)+'</span>'+
-    '<span class="tag '+pc+'">'+t.priorita+'</span>'+
-    '<span class="tag tag-'+sc+'">'+t.stato+'</span></div></div>'+
-    actions+'</div>';
+    '<span class="tag '+pc+'">'+escHtml(t.priorita)+'</span>'+
+    '<span class="tag tag-'+sc+'">'+escHtml(t.stato)+'</span></div></div>'+
+    '<div class="ticket-actions">'+btns+'</div></div>';
 }
 
-// CONFERMA INTERVENTO
+// ── CONFERMA ──────────────────────────────────────────────────────────────────
 function apriConferma(id){
-  const t=tickets.find(x=>x.id===id);
+  const t=allTickets.find(x=>x.id===id);
   if(!t) return;
   ticketDaConfermare=id;
   const dataInput=document.getElementById('conferma-data');
   const oraInput=document.getElementById('conferma-ora');
-  if(t.dataPreferita) dataInput.value=t.dataPreferita;
+  dataInput.value=t.dataPreferita||'';
   if(t.oraPreferita){ Array.from(oraInput.options).forEach(o=>{ if(o.value.startsWith(t.oraPreferita.split(':')[0])) oraInput.value=o.value; }); }
   document.getElementById('conferma-note').value='';
   document.getElementById('modal-conferma').classList.add('open');
 }
-function closeModalConferma(e){
-  if(!e||e.target===document.getElementById('modal-conferma')) document.getElementById('modal-conferma').classList.remove('open');
-}
+function closeModalConferma(e){ if(!e||e.target===document.getElementById('modal-conferma')) document.getElementById('modal-conferma').classList.remove('open'); }
+
 async function inviaConferma(){
-  const t=tickets.find(x=>x.id===ticketDaConfermare);
+  const t=allTickets.find(x=>x.id===ticketDaConfermare);
   if(!t) return;
   const data=document.getElementById('conferma-data').value;
   const ora=document.getElementById('conferma-ora').value;
   const note=document.getElementById('conferma-note').value.trim();
   if(!data){ alert('Seleziona una data'); return; }
-  t.stato='In lavorazione'; t.dataConfermata=data; t.oraConfermata=ora; save();
   document.getElementById('modal-conferma').classList.remove('open');
-  renderAdmin();
   await inviaGAS({action:'conferma_intervento', id:t.id, nome:t.nome, email:t.email, sede:t.sede, categoria:t.categoria, priorita:t.priorita, dataConfermata:data, oraConfermata:ora, note});
   showToast('ok','Intervento confermato per <strong>'+data+'</strong> ore <strong>'+ora+'</strong>. Email inviata a '+t.email);
+  setTimeout(loadAdmin, 1500);
 }
 
-// CHIUSURA UTENTE
-function apriChiudi(id){
-  ticketDaChiudere=id;
-  document.getElementById('chiudi-esito').value='';
-  document.getElementById('modal-chiudi').classList.add('open');
-}
-function closeModalChiudi(e){
-  if(!e||e.target===document.getElementById('modal-chiudi')) document.getElementById('modal-chiudi').classList.remove('open');
-}
+// ── CHIUSURA ──────────────────────────────────────────────────────────────────
+function apriChiudi(id){ ticketDaChiudere=id; document.getElementById('chiudi-esito').value=''; document.getElementById('modal-chiudi').classList.add('open'); }
+function closeModalChiudi(e){ if(!e||e.target===document.getElementById('modal-chiudi')) document.getElementById('modal-chiudi').classList.remove('open'); }
+
 async function confermaChiusura(){
-  const t=tickets.find(x=>x.id===ticketDaChiudere);
+  const t=allTickets.find(x=>x.id===ticketDaChiudere);
   if(!t) return;
   const esito=document.getElementById('chiudi-esito').value.trim()||"Chiuso dall'utente.";
-  t.stato='Chiuso'; t.note=esito; save();
   document.getElementById('modal-chiudi').classList.remove('open');
-  renderStorico();
   await inviaGAS({action:'chiudi_ticket', id:t.id, nome:t.nome, email:t.email, esito});
+  showToast('ok','Ticket chiuso correttamente.');
+  setTimeout(loadStorico, 1500);
 }
 
-// MODAL DETTAGLIO
+// ── MODAL DETTAGLIO ───────────────────────────────────────────────────────────
 function openModal(id){
-  const t=tickets.find(x=>x.id===id);
+  const t=allTickets.find(x=>x.id===id);
   if(!t) return;
   const statoOpts=['Aperto','In lavorazione','Chiuso'].map(s=>'<option '+(t.stato===s?'selected':'')+'>'+s+'</option>').join('');
   document.getElementById('modal-content').innerHTML=
     '<div class="modal-header"><div>'+
-    '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">'+t.id+' · '+fmtDate(t.createdAt)+'</div>'+
+    '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px">'+escHtml(t.id)+' · '+fmtDate(t.createdAt)+'</div>'+
     '<h2 style="font-size:17px;font-weight:600">'+escHtml(t.categoria)+'</h2></div>'+
     '<button class="modal-close" onclick="closeModal()">✕</button></div>'+
-    '<div class="modal-row"><label>Richiedente</label><p>'+escHtml(t.nome)+' · <a href="mailto:'+t.email+'" style="color:var(--accent)">'+t.email+'</a></p></div>'+
+    '<div class="modal-row"><label>Richiedente</label><p>'+escHtml(t.nome)+' · <a href="mailto:'+escHtml(t.email)+'" style="color:var(--accent)">'+escHtml(t.email)+'</a></p></div>'+
     '<div class="modal-row"><label>Ruolo</label><p>'+escHtml(t.ruolo)+'</p></div>'+
     '<div class="modal-row"><label>Sede</label><p>'+escHtml(t.sede)+'</p></div>'+
-    '<div class="modal-row"><label>Priorità</label><p>'+t.priorita+'</p></div>'+
-    (t.dataPreferita?'<div class="modal-row"><label>Data preferita</label><p>'+t.dataPreferita+(t.oraPreferita?' — '+t.oraPreferita:'')+'</p></div>':'')+
-    (t.dataConfermata?'<div class="modal-row"><label>Data confermata</label><p><strong>'+t.dataConfermata+(t.oraConfermata?' — '+t.oraConfermata:'')+'</strong></p></div>':'')+
+    '<div class="modal-row"><label>Priorità</label><p>'+escHtml(t.priorita)+'</p></div>'+
+    (t.dataPreferita?'<div class="modal-row"><label>Data preferita</label><p>'+escHtml(t.dataPreferita)+(t.oraPreferita?' — '+escHtml(t.oraPreferita):'')+'</p></div>':'')+
+    (t.dataConfermata?'<div class="modal-row"><label>Data confermata</label><p style="color:var(--teal);font-weight:600">'+escHtml(t.dataConfermata)+(t.oraConfermata?' — '+escHtml(t.oraConfermata):'')+'</p></div>':'')+
     '<div class="modal-row"><label>Descrizione</label><p style="white-space:pre-wrap">'+escHtml(t.descrizione)+'</p></div>'+
     (t.note?'<div class="modal-row"><label>Note</label><p style="white-space:pre-wrap">'+escHtml(t.note)+'</p></div>':'')+
     '<hr class="modal-divider">'+
@@ -572,29 +571,25 @@ function openModal(id){
       '<button class="btn-sm success" style="margin-top:6px" onclick="saveNote(\''+t.id+'\')">Salva nota</button></div>':'');
   document.getElementById('modal-overlay').classList.add('open');
 }
-function closeModal(e){
-  if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open');
+function closeModal(e){ if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.remove('open'); }
+
+async function setStato(id,stato){
+  const t=allTickets.find(x=>x.id===id);
+  if(t){ t.stato=stato; renderAdmin(); updateBadge(); await inviaGAS({action:'update_ticket', id, stato}); }
 }
-function setStato(id,stato){
-  const t=tickets.find(x=>x.id===id);
-  if(t){t.stato=stato;save();renderAdmin();updateBadge();}
+
+async function saveNote(id){
+  const note=document.getElementById('modal-note').value;
+  const t=allTickets.find(x=>x.id===id);
+  if(t){ t.note=note; await inviaGAS({action:'update_ticket', id, note}); }
+  const btn=document.querySelector('#modal-content .btn-sm.success');
+  if(btn){btn.textContent='Salvato ✓';setTimeout(()=>btn.textContent='Salva nota',1500);}
 }
-function saveNote(id){
-  const t=tickets.find(x=>x.id===id);
-  if(t){
-    t.note=document.getElementById('modal-note').value; save();
-    const btn=document.querySelector('#modal-content .btn-sm.success');
-    if(btn){btn.textContent='Salvato ✓';setTimeout(()=>btn.textContent='Salva nota',1500);}
-  }
-}
-function clearClosed(){ tickets=tickets.filter(t=>t.stato!=='Chiuso'); save(); renderAdmin(); }
 
 // INIT
 const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
 const dd=String(tomorrow.getDate()).padStart(2,'0'), mm=String(tomorrow.getMonth()+1).padStart(2,'0'), yyyy=tomorrow.getFullYear();
 document.getElementById('f-data').min=yyyy+'-'+mm+'-'+dd;
-
-load(); updateBadge();
 </script>
 </body>
 </html>
