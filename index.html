@@ -4,9 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DEMM Help Desk — Sannio</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B2C5C">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DEMM HD">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F4F2ED;--surface:#FFF;--surface2:#EDEAE3;--border:#D8D4CB;--text:#1A1917;--muted:#7A7770;--accent:#1E4D8C;--accent-light:#E8EEF7;--teal:#0D6B52;--teal-light:#E3F2EC;--amber:#8A4F0A;--amber-light:#FDF0E0;--red:#9B2B2B;--red-light:#FDEAEA;--green:#2D6A2D;--green-light:#E8F5E8;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;}
+:root{--bg:#F5F3EF;--surface:#FFF;--surface2:#EDE9E2;--border:#D9D3C7;--text:#1A1614;--muted:#736B5E;--accent:#0B2C5C;--accent-light:#E6EBF2;--teal:#0D6B52;--teal-light:#E3F2EC;--amber:#8A4F0A;--amber-light:#FDF0E0;--red:#8B2332;--red-light:#FBEAEC;--green:#2D6A2D;--green-light:#E8F5E8;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
 .header{background:var(--text);color:white;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
@@ -590,6 +596,12 @@ async function saveNote(id){
 const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
 const dd=String(tomorrow.getDate()).padStart(2,'0'), mm=String(tomorrow.getMonth()+1).padStart(2,'0'), yyyy=tomorrow.getFullYear();
 document.getElementById('f-data').min=yyyy+'-'+mm+'-'+dd;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
