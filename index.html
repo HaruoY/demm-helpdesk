@@ -163,7 +163,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
         <select id="f-ruolo" required>
           <option value="">Seleziona…</option>
           <option>Docente</option><option>Ricercatore / RTD</option>
-          <option>Personale TAB</option><option>Dottorando</option><option>Assegnista</option>
+          <option>Personale TAB</option><option>Dottorando</option><option>Assegnista</option><option>Studente</option>
         </select>
       </div>
       <div class="field">
@@ -756,8 +756,8 @@ async function saveNote(id){
 }
 
 // INIT
-const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
-const dd=String(tomorrow.getDate()).padStart(2,'0'), mm=String(tomorrow.getMonth()+1).padStart(2,'0'), yyyy=tomorrow.getFullYear();
+const oggi=new Date();
+const dd=String(oggi.getDate()).padStart(2,'0'), mm=String(oggi.getMonth()+1).padStart(2,'0'), yyyy=oggi.getFullYear();
 document.getElementById('f-data').min=yyyy+'-'+mm+'-'+dd;
 
 // ── NOTIFICHE (locali, basate su polling dei propri ticket) ──────────────────
