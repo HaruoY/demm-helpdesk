@@ -330,6 +330,15 @@ function fmtDate(iso){
   if(isNaN(d)) return String(iso);
   return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
 }
+function fmtDataPura(val){
+  // Pulisce eventuali timestamp ISO residui, mostrando solo la data YYYY-MM-DD in formato leggibile gg/mm/aaaa
+  if(!val) return '';
+  let s = String(val);
+  if(s.indexOf('T')>-1) s = s.split('T')[0];
+  const parts = s.split('-');
+  if(parts.length===3) return parts[2]+'/'+parts[1]+'/'+parts[0];
+  return s;
+}
 
 function genId(){
   const d=new Date();
@@ -650,8 +659,8 @@ function updateBadge(){
 function ticketCard(t,admin){
   const sc=t.stato==='Aperto'?'aperto':t.stato==='Chiuso'?'chiuso':'in-lavorazione';
   const pc='tag-'+(t.priorita||'bassa').toLowerCase();
-  const dataProp=t.dataPreferita?' · 📅 '+t.dataPreferita+(t.oraPreferita?' '+t.oraPreferita:''):'';
-  const dataConf=t.dataConfermata?'<span style="color:var(--teal);margin-left:6px">✓ '+t.dataConfermata+'</span>':'';
+  const dataProp=t.dataPreferita?' · 📅 '+fmtDataPura(t.dataPreferita)+(t.oraPreferita?' '+t.oraPreferita:''):'';
+  const dataConf=t.dataConfermata?'<span style="color:var(--teal);margin-left:6px">✓ '+fmtDataPura(t.dataConfermata)+(t.oraConfermata?' '+t.oraConfermata:'')+'</span>':'';
   let btns='';
   if(admin){
     if(t.stato!=='Chiuso') btns+='<button class="btn-sm accent" onclick="apriConferma(\''+t.id+'\')">📅 Conferma</button>';
@@ -727,8 +736,8 @@ function openModal(id){
     '<div class="modal-row"><label>Ruolo</label><p>'+escHtml(t.ruolo)+'</p></div>'+
     '<div class="modal-row"><label>Sede</label><p>'+escHtml(t.sede)+'</p></div>'+
     '<div class="modal-row"><label>Priorità</label><p>'+escHtml(t.priorita)+'</p></div>'+
-    (t.dataPreferita?'<div class="modal-row"><label>Data preferita</label><p>'+escHtml(t.dataPreferita)+(t.oraPreferita?' — '+escHtml(t.oraPreferita):'')+'</p></div>':'')+
-    (t.dataConfermata?'<div class="modal-row"><label>Data confermata</label><p style="color:var(--teal);font-weight:600">'+escHtml(t.dataConfermata)+(t.oraConfermata?' — '+escHtml(t.oraConfermata):'')+'</p></div>':'')+
+    (t.dataPreferita?'<div class="modal-row"><label>Data preferita</label><p>'+escHtml(fmtDataPura(t.dataPreferita))+(t.oraPreferita?' — '+escHtml(t.oraPreferita):'')+'</p></div>':'')+
+    (t.dataConfermata?'<div class="modal-row"><label>Data confermata</label><p style="color:var(--teal);font-weight:600">'+escHtml(fmtDataPura(t.dataConfermata))+(t.oraConfermata?' — '+escHtml(t.oraConfermata):'')+'</p></div>':'')+
     '<div class="modal-row"><label>Descrizione</label><p style="white-space:pre-wrap">'+escHtml(t.descrizione)+'</p></div>'+
     (t.note?'<div class="modal-row"><label>Note</label><p style="white-space:pre-wrap">'+escHtml(t.note)+'</p></div>':'')+
     '<hr class="modal-divider">'+
